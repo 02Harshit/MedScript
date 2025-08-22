@@ -244,6 +244,17 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Get prescriptions for current doctor (for history page)
+  app.get("/api/prescriptions", requireAuth, async (req, res) => {
+    try {
+      const prescriptions = await storage.getPrescriptionsByDoctor(req.session.doctorId);
+      res.json(prescriptions);
+    } catch (error) {
+      console.error("Error fetching prescriptions:", error);
+      res.status(500).json({ message: "Internal server error" });
+    }
+  });
+
   // Dashboard stats
   app.get("/api/dashboard/stats", requireAuth, async (req, res) => {
     try {

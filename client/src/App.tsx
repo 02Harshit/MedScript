@@ -8,6 +8,7 @@ import Register from "@/pages/register";
 import Dashboard from "@/pages/dashboard";
 import PatientManagement from "@/pages/patient-management";
 import PrescriptionCreation from "@/pages/prescription-creation";
+import History from "@/pages/history";
 import NotFound from "@/pages/not-found";
 import DashboardLayout from "@/components/dashboard-layout";
 import { useQuery } from "@tanstack/react-query";
@@ -40,6 +41,7 @@ function AuthenticatedRoutes() {
         <Route path="/" component={Dashboard} />
         <Route path="/patients" component={PatientManagement} />
         <Route path="/prescriptions/new" component={PrescriptionCreation} />
+        <Route path="/history" component={History} />
         <Route component={NotFound} />
       </Switch>
     </DashboardLayout>
