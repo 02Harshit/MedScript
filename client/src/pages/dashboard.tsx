@@ -20,7 +20,7 @@ export default function Dashboard() {
     );
   }
 
-  const recentPatients = patients?.slice(0, 3) || [];
+  const recentPatients = (patients as any[])?.slice(0, 3) || [];
 
   return (
     <div>
@@ -37,7 +37,7 @@ export default function Dashboard() {
               <div>
                 <p className="text-sm text-gray-600 mb-1">Today's Patients</p>
                 <p className="text-2xl font-bold text-gray-900" data-testid="stat-todayPatients">
-                  {stats?.todayPatients || 0}
+                  {(stats as any)?.todayPatients || 0}
                 </p>
               </div>
               <div className="w-12 h-12 bg-blue-100 rounded-xl flex items-center justify-center">
@@ -53,7 +53,7 @@ export default function Dashboard() {
               <div>
                 <p className="text-sm text-gray-600 mb-1">Prescriptions</p>
                 <p className="text-2xl font-bold text-gray-900" data-testid="stat-prescriptions">
-                  {stats?.prescriptions || 0}
+                  {(stats as any)?.prescriptions || 0}
                 </p>
               </div>
               <div className="w-12 h-12 bg-green-100 rounded-xl flex items-center justify-center">
@@ -69,7 +69,7 @@ export default function Dashboard() {
               <div>
                 <p className="text-sm text-gray-600 mb-1">Pending Reviews</p>
                 <p className="text-2xl font-bold text-gray-900" data-testid="stat-pendingReviews">
-                  {stats?.pendingReviews || 0}
+                  {(stats as any)?.pendingReviews || 0}
                 </p>
               </div>
               <div className="w-12 h-12 bg-amber-100 rounded-xl flex items-center justify-center">
@@ -85,7 +85,7 @@ export default function Dashboard() {
               <div>
                 <p className="text-sm text-gray-600 mb-1">Total Patients</p>
                 <p className="text-2xl font-bold text-gray-900" data-testid="stat-totalPatients">
-                  {stats?.totalPatients || 0}
+                  {(stats as any)?.totalPatients || 0}
                 </p>
               </div>
               <div className="w-12 h-12 bg-purple-100 rounded-xl flex items-center justify-center">

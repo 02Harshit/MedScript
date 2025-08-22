@@ -54,6 +54,20 @@ export default function VoiceRecorder({ onTranscriptionProcessed }: VoiceRecorde
     }
 
     const medicines = parsePrescriptionText(transcribedText);
+    
+    if (medicines.length > 0 && medicines[0].name) {
+      toast({
+        title: "Processing complete",
+        description: `Extracted ${medicines.length} medicine(s) from your speech.`,
+      });
+    } else {
+      toast({
+        title: "No medicines detected",
+        description: "Please try speaking more clearly about specific medicines.",
+        variant: "destructive",
+      });
+    }
+    
     onTranscriptionProcessed(transcribedText, medicines);
   };
 

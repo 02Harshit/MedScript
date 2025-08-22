@@ -36,7 +36,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
         password: hashedPassword,
       });
 
-      req.session.doctorId = doctor.id;
+      if (req.session) {
+        req.session.doctorId = doctor.id;
+      }
       
       res.json({ 
         message: "Registration successful", 
@@ -73,7 +75,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
         return res.status(401).json({ message: "Invalid credentials" });
       }
 
-      req.session.doctorId = doctor.id;
+      if (req.session) {
+        req.session.doctorId = doctor.id;
+      }
       
       res.json({ 
         message: "Login successful", 
@@ -93,7 +97,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
   // Doctor logout
   app.post("/api/auth/logout", (req, res) => {
-    req.session.destroy((err) => {
+    req.session.destroy((err: any) => {
       if (err) {
         return res.status(500).json({ message: "Could not log out" });
       }
@@ -103,7 +107,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
   // Get current doctor
   app.get("/api/auth/me", async (req, res) => {
-    if (!req.session.doctorId) {
+    if (!req.session?.doctorId) {
       return res.status(401).json({ message: "Not authenticated" });
     }
 
@@ -130,7 +134,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
   // Middleware to check authentication
   const requireAuth = (req: any, res: any, next: any) => {
-    if (!req.session.doctorId) {
+    if (!req.session?.doctorId) {
       return res.status(401).json({ message: "Authentication required" });
     }
     next();

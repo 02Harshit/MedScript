@@ -119,7 +119,10 @@ export class DatabaseStorage implements IStorage {
   async createPrescription(insertPrescription: InsertPrescription): Promise<Prescription> {
     const [prescription] = await db
       .insert(prescriptions)
-      .values(insertPrescription)
+      .values({
+        ...insertPrescription,
+        medicines: JSON.stringify(insertPrescription.medicines)
+      } as any)
       .returning();
     return prescription;
   }

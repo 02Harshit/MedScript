@@ -12,8 +12,9 @@ export const parsePrescriptionText = (text: string): ParsedMedicine[] => {
 
   // Common medicine name patterns
   const medicinePatterns = [
-    /(\w+cillin|ibuprofen|acetaminophen|aspirin|metformin|lisinopril|amlodipine|atorvastatin|omeprazole|levothyroxine)\s*(\d+\s*mg)?/gi,
+    /(\w*cillin|ibuprofen|acetaminophen|aspirin|metformin|lisinopril|amlodipine|atorvastatin|omeprazole|levothyroxine|paracetamol|diclofenac|naproxen|warfarin|insulin|furosemide|doxycycline|tramadol|codeine|morphine|gabapentin|sertraline|fluoxetine|lorazepam|diazepam)\s*(\d+\s*(?:mg|mcg|g|ml|units?))?/gi,
     /(tablet|capsule|syrup|injection|cream|ointment|drops)\s+of\s+(\w+)/gi,
+    /(\w+)\s+(\d+\s*(?:mg|mcg|g|ml|units?))/gi,
   ];
 
   // Dosage patterns
@@ -130,13 +131,8 @@ export const parsePrescriptionText = (text: string): ParsedMedicine[] => {
     }
   });
 
-  return medicines.length > 0 ? medicines : [{
-    name: '',
-    dosage: '',
-    frequency: '',
-    duration: '',
-    instructions: `Parsed from: "${text.substring(0, 100)}..."`
-  }];
+  // If no medicines found, return empty array to not interfere with form
+  return medicines.length > 0 ? medicines : [];
 };
 
 const capitalizeFirst = (str: string): string => {

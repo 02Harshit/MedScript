@@ -48,7 +48,11 @@ export default function PrescriptionCreation() {
     resolver: zodResolver(prescriptionSchema),
     defaultValues: {
       patientId: "",
-      medicines: [{ name: "", dosage: "", frequency: "", duration: "", instructions: "" }],
+      medicines: [
+        { name: "", dosage: "", frequency: "", duration: "", instructions: "" },
+        { name: "", dosage: "", frequency: "", duration: "", instructions: "" },
+        { name: "", dosage: "", frequency: "", duration: "", instructions: "" }
+      ],
       additionalNotes: "",
       transcribedText: "",
     },
@@ -60,7 +64,7 @@ export default function PrescriptionCreation() {
   });
 
   const selectedPatientId = form.watch("patientId");
-  const selectedPatient = patients?.find((p: any) => p.id === selectedPatientId);
+  const selectedPatient = (patients as any[])?.find((p: any) => p.id === selectedPatientId);
 
   const savePrescriptionMutation = useMutation({
     mutationFn: (data: PrescriptionForm) => apiRequest("POST", "/api/prescriptions", data),
@@ -100,7 +104,7 @@ export default function PrescriptionCreation() {
 
     const prescriptionData = form.getValues();
     generatePrescriptionPDF({
-      doctor: currentDoctor.doctor,
+      doctor: (currentDoctor as any).doctor,
       patient: selectedPatient,
       medicines: prescriptionData.medicines,
       additionalNotes: prescriptionData.additionalNotes || "",
@@ -148,7 +152,7 @@ export default function PrescriptionCreation() {
                             </SelectTrigger>
                           </FormControl>
                           <SelectContent>
-                            {patients?.map((patient: any) => (
+                            {(patients as any[])?.map((patient: any) => (
                               <SelectItem key={patient.id} value={patient.id}>
                                 {patient.firstName} {patient.lastName} ({patient.phone})
                               </SelectItem>
@@ -333,10 +337,10 @@ export default function PrescriptionCreation() {
                 <div className="bg-gradient-to-br from-medical-blue to-blue-600 text-white p-6 rounded-xl mb-4">
                   <div className="text-center mb-4">
                     <h4 className="font-bold text-lg">
-                      Dr. {currentDoctor?.doctor?.firstName} {currentDoctor?.doctor?.lastName}
+                      Dr. {(currentDoctor as any)?.doctor?.firstName} {(currentDoctor as any)?.doctor?.lastName}
                     </h4>
-                    <p className="text-blue-100">{currentDoctor?.doctor?.specialization || 'MD'}</p>
-                    <p className="text-blue-100 text-sm">License: {currentDoctor?.doctor?.medicalLicenseId}</p>
+                    <p className="text-blue-100">{(currentDoctor as any)?.doctor?.specialization || 'MD'}</p>
+                    <p className="text-blue-100 text-sm">License: {(currentDoctor as any)?.doctor?.medicalLicenseId}</p>
                   </div>
                   <div className="border-t border-blue-400 pt-4">
                     <p className="text-sm font-medium mb-1">

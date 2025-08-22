@@ -123,8 +123,8 @@ export default function PatientDetailsModal({ patient, open, onOpenChange }: Pat
             <div>
               <h4 className="text-lg font-semibold text-gray-900 mb-4">Recent Prescriptions</h4>
               <div className="space-y-4">
-                {prescriptions && prescriptions.length > 0 ? (
-                  prescriptions.map((prescription: any) => (
+                {(prescriptions as any[]) && (prescriptions as any[]).length > 0 ? (
+                  (prescriptions as any[]).map((prescription: any) => (
                     <div key={prescription.id} className="border border-gray-200 rounded-xl p-4" data-testid={`prescription-${prescription.id}`}>
                       <div className="flex items-center justify-between mb-2">
                         <h5 className="font-medium text-gray-900">

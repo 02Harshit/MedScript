@@ -35,7 +35,7 @@ function AuthenticatedRoutes() {
   }
 
   return (
-    <DashboardLayout doctor={currentDoctor.doctor}>
+    <DashboardLayout doctor={(currentDoctor as any).doctor}>
       <Switch>
         <Route path="/" component={Dashboard} />
         <Route path="/patients" component={PatientManagement} />
