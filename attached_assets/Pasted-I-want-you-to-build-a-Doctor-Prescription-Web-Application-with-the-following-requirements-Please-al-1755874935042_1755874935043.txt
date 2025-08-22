@@ -1,0 +1,143 @@
+I want you to build a Doctor Prescription Web Application with the following requirements. Please also provide a clear explanation of the project structure, along with step-by-step instructions to set up and run it on my local machine.
+
+Tech Stack
+
+Frontend: React.js + TailwindCSS (JavaScript only, no TypeScript)
+
+Backend (Main App): Node.js + Express (JavaScript only, no TypeScript)
+
+Database: MongoDB
+
+AI Microservice: Python (FastAPI or Flask) for Speech-to-Text & NLP
+
+Core Features
+
+Authentication & Authorization
+
+Secure login/signup for doctors.
+
+Role-based access (doctor, admin).
+
+Patient Management
+
+Doctors can search, view, add, and edit patient profiles.
+
+Store basic patient info & history in MongoDB.
+
+Prescription Creation (AI-powered with voice input)
+
+A record button to capture doctor’s voice.
+
+Send audio to Python microservice for:
+
+Speech-to-Text (use Whisper or any free open-source STT).
+
+NLP processing to extract:
+
+Medicines (name, dosage, frequency, duration).
+
+Tests.
+
+Send structured prescription back to Node.js.
+
+Node.js generates a professional-looking PDF prescription (downloadable).
+
+Dashboard / UI
+
+Doctor dashboard with navigation.
+
+Prescription history for each patient.
+
+Clean Tailwind-based design.
+
+Additional Features (Future Scope)
+
+Conflicting drug warnings (detect unsafe medicine combinations).
+
+Email prescription to patient (PDF attachment).
+
+Doctor’s digital signature on PDF.
+
+Analytics dashboard (patients count, prescriptions count, most common medicines/tests, etc.).
+
+Voice commands for navigation.
+
+Multi-language support for prescriptions.
+
+Project Structure (Must be Explained Clearly)
+
+Please generate the project with a modular, clean folder structure like this (or similar):
+
+doctor-prescription-app/
+│
+├── backend/ (Node.js + Express)
+│   ├── src/
+│   │   ├── models/        # Mongoose schemas
+│   │   ├── routes/        # Express routes (auth, patients, prescriptions)
+│   │   ├── controllers/   # Route controllers
+│   │   ├── utils/         # PDF generation, helpers
+│   │   └── server.js      # Entry point
+│   └── package.json
+│
+├── frontend/ (React + Tailwind)
+│   ├── src/
+│   │   ├── components/    # Reusable UI components
+│   │   ├── pages/         # Login, Dashboard, Patients, Prescription pages
+│   │   └── App.js
+│   └── package.json
+│
+├── ai-service/ (Python - FastAPI/Flask)
+│   ├── app.py             # Entry point for AI microservice
+│   ├── stt.py             # Speech-to-text logic (Whisper, etc.)
+│   ├── nlp.py             # Extract medicines/tests from text
+│   ├── requirements.txt   # Python dependencies
+│
+└── README.md              # Clear setup & run instructions
+
+Setup & Running (Must be Explained in README + Response)
+
+Please clearly describe how to set up and run the project locally:
+
+Clone repo & install dependencies
+
+cd backend && npm install
+
+cd frontend && npm install
+
+cd ai-service && pip install -r requirements.txt
+
+Run MongoDB locally (or connect to Atlas).
+
+Start AI microservice
+
+cd ai-service
+
+python app.py
+
+Start backend
+
+cd backend
+
+npm run dev
+
+Start frontend
+
+cd frontend
+
+npm start
+
+Visit frontend in browser (e.g., http://localhost:3000).
+
+Important Notes
+
+Keep everything in JavaScript only (no TypeScript).
+
+Use MVC pattern for backend (controllers, routes, models separated).
+
+Explain in detail how the Node backend talks to the Python microservice (via REST API calls).
+
+Add comments in code for clarity.
+
+Ensure the PDF prescriptions look professional (proper formatting).
+
+👉 Please generate the entire project scaffold, including all folders/files, and give me a clear explanation of how it works.
