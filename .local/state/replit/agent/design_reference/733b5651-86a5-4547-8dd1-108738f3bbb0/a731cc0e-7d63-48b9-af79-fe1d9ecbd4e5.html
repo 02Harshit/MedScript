@@ -1,0 +1,1041 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MedScript - Doctor Prescription Management</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        'inter': ['Inter', 'sans-serif'],
+                    },
+                    colors: {
+                        'medical-blue': '#2563EB',
+                        'success-green': '#10B981',
+                        'warning-amber': '#F59E0B',
+                        'error-red': '#EF4444',
+                        'surface-gray': '#F8FAFC',
+                    }
+                }
+            }
+        }
+    </script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+</head>
+<body class="bg-surface-gray font-inter">
+    
+    <!-- Login Page -->
+    <div id="loginPage" class="min-h-screen flex items-center justify-center bg-gradient-to-br from-medical-blue to-blue-700 p-4">
+        <div class="max-w-md w-full bg-white rounded-2xl shadow-2xl p-8">
+            <div class="text-center mb-8">
+                <div class="w-16 h-16 bg-medical-blue rounded-full flex items-center justify-center mx-auto mb-4">
+                    <i class="fas fa-stethoscope text-2xl text-white"></i>
+                </div>
+                <h1 class="text-3xl font-bold text-gray-900 mb-2">MedScript</h1>
+                <p class="text-gray-600">Doctor Prescription Management</p>
+            </div>
+            
+            <form class="space-y-6" data-mock="true">
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Username or Medical License ID</label>
+                    <input type="text" 
+                           class="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-medical-blue focus:border-transparent transition-all"
+                           placeholder="Enter username or license ID"
+                           data-mock="true">
+                </div>
+                
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Password</label>
+                    <input type="password" 
+                           class="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-medical-blue focus:border-transparent transition-all"
+                           placeholder="Enter your password"
+                           data-mock="true">
+                </div>
+                
+                <div class="flex items-center justify-between">
+                    <label class="flex items-center">
+                        <input type="checkbox" class="h-4 w-4 text-medical-blue focus:ring-medical-blue border-gray-300 rounded">
+                        <span class="ml-2 text-sm text-gray-600">Remember me</span>
+                    </label>
+                    <a href="#" class="text-sm text-medical-blue hover:text-blue-700">Forgot password?</a>
+                </div>
+                
+                <button type="submit" 
+                        class="w-full bg-medical-blue text-white py-3 rounded-xl font-semibold hover:bg-blue-700 transition-colors focus:ring-2 focus:ring-offset-2 focus:ring-medical-blue"
+                        onclick="showDashboard()">
+                    Sign In
+                </button>
+                
+                <div class="text-center">
+                    <span class="text-sm text-gray-600">Don't have an account? </span>
+                    <a href="#" class="text-sm text-medical-blue hover:text-blue-700 font-medium" onclick="showRegistration()">Register here</a>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Registration Page -->
+    <div id="registrationPage" class="min-h-screen bg-gradient-to-br from-medical-blue to-blue-700 p-4 hidden">
+        <div class="max-w-2xl mx-auto bg-white rounded-2xl shadow-2xl p-8">
+            <div class="text-center mb-8">
+                <div class="w-16 h-16 bg-medical-blue rounded-full flex items-center justify-center mx-auto mb-4">
+                    <i class="fas fa-user-md text-2xl text-white"></i>
+                </div>
+                <h1 class="text-3xl font-bold text-gray-900 mb-2">Doctor Registration</h1>
+                <p class="text-gray-600">Create your MedScript account</p>
+            </div>
+            
+            <form class="grid grid-cols-1 md:grid-cols-2 gap-6" data-mock="true">
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">First Name *</label>
+                    <input type="text" class="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-medical-blue focus:border-transparent" data-mock="true">
+                </div>
+                
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Last Name *</label>
+                    <input type="text" class="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-medical-blue focus:border-transparent" data-mock="true">
+                </div>
+                
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Medical License ID *</label>
+                    <input type="text" class="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-medical-blue focus:border-transparent" data-mock="true">
+                </div>
+                
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Specialization</label>
+                    <select class="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-medical-blue focus:border-transparent" data-mock="true">
+                        <option>General Practitioner</option>
+                        <option>Cardiologist</option>
+                        <option>Neurologist</option>
+                        <option>Orthopedist</option>
+                        <option>Other</option>
+                    </select>
+                </div>
+                
+                <div class="md:col-span-2">
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Email Address *</label>
+                    <input type="email" class="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-medical-blue focus:border-transparent" data-mock="true">
+                </div>
+                
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Username *</label>
+                    <input type="text" class="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-medical-blue focus:border-transparent" data-mock="true">
+                </div>
+                
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Password *</label>
+                    <input type="password" class="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-medical-blue focus:border-transparent" data-mock="true">
+                </div>
+                
+                <div class="md:col-span-2 flex space-x-4">
+                    <button type="button" 
+                            class="flex-1 bg-gray-300 text-gray-700 py-3 rounded-xl font-semibold hover:bg-gray-400 transition-colors"
+                            onclick="showLogin()">
+                        Back to Login
+                    </button>
+                    <button type="submit" 
+                            class="flex-1 bg-medical-blue text-white py-3 rounded-xl font-semibold hover:bg-blue-700 transition-colors">
+                        Register
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Main Dashboard -->
+    <div id="dashboardPage" class="min-h-screen bg-surface-gray hidden">
+        <!-- Header -->
+        <header class="bg-white shadow-sm border-b border-gray-200">
+            <div class="flex items-center justify-between px-6 py-4">
+                <div class="flex items-center space-x-3">
+                    <div class="w-10 h-10 bg-medical-blue rounded-lg flex items-center justify-center">
+                        <i class="fas fa-stethoscope text-white"></i>
+                    </div>
+                    <div>
+                        <h1 class="text-xl font-bold text-gray-900">MedScript</h1>
+                        <p class="text-sm text-gray-600">Dr. Sarah Johnson - Cardiologist</p>
+                    </div>
+                </div>
+                
+                <div class="flex items-center space-x-4">
+                    <button class="p-2 text-gray-400 hover:text-gray-600 transition-colors">
+                        <i class="fas fa-bell text-lg"></i>
+                        <span class="absolute top-0 right-0 h-2 w-2 bg-error-red rounded-full"></span>
+                    </button>
+                    <div class="relative">
+                        <button class="flex items-center space-x-2 p-2 rounded-lg hover:bg-gray-100 transition-colors">
+                            <div class="w-8 h-8 bg-gradient-to-br from-medical-blue to-blue-600 rounded-full flex items-center justify-center">
+                                <span class="text-white text-sm font-medium">SJ</span>
+                            </div>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <div class="flex">
+            <!-- Sidebar -->
+            <nav class="w-64 bg-white shadow-sm h-screen sticky top-0">
+                <div class="p-6">
+                    <div class="space-y-2">
+                        <a href="#" class="flex items-center space-x-3 p-3 rounded-xl bg-medical-blue text-white" onclick="showDashboardContent()">
+                            <i class="fas fa-home"></i>
+                            <span class="font-medium">Dashboard</span>
+                        </a>
+                        <a href="#" class="flex items-center space-x-3 p-3 rounded-xl text-gray-600 hover:bg-gray-100 transition-colors" onclick="showPatientManagement()">
+                            <i class="fas fa-users"></i>
+                            <span class="font-medium">Patients</span>
+                        </a>
+                        <a href="#" class="flex items-center space-x-3 p-3 rounded-xl text-gray-600 hover:bg-gray-100 transition-colors" onclick="showPrescriptionCreation()">
+                            <i class="fas fa-prescription"></i>
+                            <span class="font-medium">New Prescription</span>
+                        </a>
+                        <a href="#" class="flex items-center space-x-3 p-3 rounded-xl text-gray-600 hover:bg-gray-100 transition-colors">
+                            <i class="fas fa-history"></i>
+                            <span class="font-medium">History</span>
+                        </a>
+                        <a href="#" class="flex items-center space-x-3 p-3 rounded-xl text-gray-600 hover:bg-gray-100 transition-colors">
+                            <i class="fas fa-chart-line"></i>
+                            <span class="font-medium">Analytics</span>
+                        </a>
+                        <a href="#" class="flex items-center space-x-3 p-3 rounded-xl text-gray-600 hover:bg-gray-100 transition-colors">
+                            <i class="fas fa-cog"></i>
+                            <span class="font-medium">Settings</span>
+                        </a>
+                    </div>
+                    
+                    <div class="mt-8 pt-8 border-t border-gray-200">
+                        <a href="#" class="flex items-center space-x-3 p-3 rounded-xl text-red-600 hover:bg-red-50 transition-colors" onclick="showLogin()">
+                            <i class="fas fa-sign-out-alt"></i>
+                            <span class="font-medium">Sign Out</span>
+                        </a>
+                    </div>
+                </div>
+            </nav>
+
+            <!-- Main Content Area -->
+            <main class="flex-1 p-6">
+                
+                <!-- Dashboard Content -->
+                <div id="dashboardContent">
+                    <div class="mb-8">
+                        <h2 class="text-2xl font-bold text-gray-900 mb-2">Good morning, Dr. Johnson</h2>
+                        <p class="text-gray-600">Here's your practice overview for today</p>
+                    </div>
+                    
+                    <!-- Stats Cards -->
+                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+                        <div class="bg-white p-6 rounded-2xl shadow-sm border border-gray-100">
+                            <div class="flex items-center justify-between">
+                                <div>
+                                    <p class="text-sm text-gray-600 mb-1">Today's Patients</p>
+                                    <p class="text-2xl font-bold text-gray-900" data-bind="stats.todayPatients">12</p>
+                                </div>
+                                <div class="w-12 h-12 bg-blue-100 rounded-xl flex items-center justify-center">
+                                    <i class="fas fa-users text-blue-600"></i>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="bg-white p-6 rounded-2xl shadow-sm border border-gray-100">
+                            <div class="flex items-center justify-between">
+                                <div>
+                                    <p class="text-sm text-gray-600 mb-1">Prescriptions</p>
+                                    <p class="text-2xl font-bold text-gray-900" data-bind="stats.prescriptions">8</p>
+                                </div>
+                                <div class="w-12 h-12 bg-green-100 rounded-xl flex items-center justify-center">
+                                    <i class="fas fa-prescription text-success-green"></i>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="bg-white p-6 rounded-2xl shadow-sm border border-gray-100">
+                            <div class="flex items-center justify-between">
+                                <div>
+                                    <p class="text-sm text-gray-600 mb-1">Pending Reviews</p>
+                                    <p class="text-2xl font-bold text-gray-900" data-bind="stats.pendingReviews">3</p>
+                                </div>
+                                <div class="w-12 h-12 bg-amber-100 rounded-xl flex items-center justify-center">
+                                    <i class="fas fa-clock text-warning-amber"></i>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="bg-white p-6 rounded-2xl shadow-sm border border-gray-100">
+                            <div class="flex items-center justify-between">
+                                <div>
+                                    <p class="text-sm text-gray-600 mb-1">Total Patients</p>
+                                    <p class="text-2xl font-bold text-gray-900" data-bind="stats.totalPatients">247</p>
+                                </div>
+                                <div class="w-12 h-12 bg-purple-100 rounded-xl flex items-center justify-center">
+                                    <i class="fas fa-user-friends text-purple-600"></i>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Recent Activity -->
+                    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                        <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-6">
+                            <h3 class="text-lg font-semibold text-gray-900 mb-4">Recent Patients</h3>
+                            <div class="space-y-4">
+                                <!-- @MAP: recentPatients.map(patient => ( -->
+                                <div class="flex items-center justify-between p-3 rounded-xl hover:bg-gray-50 transition-colors" data-mock="true">
+                                    <div class="flex items-center space-x-3">
+                                        <div class="w-10 h-10 bg-gradient-to-br from-blue-500 to-purple-600 rounded-full flex items-center justify-center">
+                                            <span class="text-white text-sm font-medium">JD</span>
+                                        </div>
+                                        <div>
+                                            <p class="font-medium text-gray-900">John Doe</p>
+                                            <p class="text-sm text-gray-500">ID: PAT-001</p>
+                                        </div>
+                                    </div>
+                                    <span class="text-sm text-gray-400">2 hours ago</span>
+                                </div>
+                                
+                                <div class="flex items-center justify-between p-3 rounded-xl hover:bg-gray-50 transition-colors" data-mock="true">
+                                    <div class="flex items-center space-x-3">
+                                        <div class="w-10 h-10 bg-gradient-to-br from-green-500 to-teal-600 rounded-full flex items-center justify-center">
+                                            <span class="text-white text-sm font-medium">MS</span>
+                                        </div>
+                                        <div>
+                                            <p class="font-medium text-gray-900">Mary Smith</p>
+                                            <p class="text-sm text-gray-500">ID: PAT-002</p>
+                                        </div>
+                                    </div>
+                                    <span class="text-sm text-gray-400">4 hours ago</span>
+                                </div>
+                                
+                                <div class="flex items-center justify-between p-3 rounded-xl hover:bg-gray-50 transition-colors" data-mock="true">
+                                    <div class="flex items-center space-x-3">
+                                        <div class="w-10 h-10 bg-gradient-to-br from-amber-500 to-orange-600 rounded-full flex items-center justify-center">
+                                            <span class="text-white text-sm font-medium">RJ</span>
+                                        </div>
+                                        <div>
+                                            <p class="font-medium text-gray-900">Robert Johnson</p>
+                                            <p class="text-sm text-gray-500">ID: PAT-003</p>
+                                        </div>
+                                    </div>
+                                    <span class="text-sm text-gray-400">1 day ago</span>
+                                </div>
+                                <!-- @END_MAP )) -->
+                            </div>
+                        </div>
+                        
+                        <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-6">
+                            <h3 class="text-lg font-semibold text-gray-900 mb-4">Quick Actions</h3>
+                            <div class="grid grid-cols-2 gap-4">
+                                <button class="p-4 border-2 border-dashed border-gray-200 rounded-xl hover:border-medical-blue hover:bg-blue-50 transition-colors text-center" onclick="showPatientManagement()">
+                                    <i class="fas fa-user-plus text-2xl text-medical-blue mb-2"></i>
+                                    <p class="font-medium text-gray-900">Add Patient</p>
+                                </button>
+                                
+                                <button class="p-4 border-2 border-dashed border-gray-200 rounded-xl hover:border-success-green hover:bg-green-50 transition-colors text-center" onclick="showPrescriptionCreation()">
+                                    <i class="fas fa-prescription text-2xl text-success-green mb-2"></i>
+                                    <p class="font-medium text-gray-900">New Prescription</p>
+                                </button>
+                                
+                                <button class="p-4 border-2 border-dashed border-gray-200 rounded-xl hover:border-warning-amber hover:bg-amber-50 transition-colors text-center">
+                                    <i class="fas fa-search text-2xl text-warning-amber mb-2"></i>
+                                    <p class="font-medium text-gray-900">Search Records</p>
+                                </button>
+                                
+                                <button class="p-4 border-2 border-dashed border-gray-200 rounded-xl hover:border-purple-500 hover:bg-purple-50 transition-colors text-center">
+                                    <i class="fas fa-chart-bar text-2xl text-purple-500 mb-2"></i>
+                                    <p class="font-medium text-gray-900">View Reports</p>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Patient Management -->
+                <div id="patientManagement" class="hidden">
+                    <div class="flex items-center justify-between mb-8">
+                        <div>
+                            <h2 class="text-2xl font-bold text-gray-900 mb-2">Patient Management</h2>
+                            <p class="text-gray-600">Search, view, and manage patient records</p>
+                        </div>
+                        <button class="bg-medical-blue text-white px-6 py-3 rounded-xl font-semibold hover:bg-blue-700 transition-colors flex items-center space-x-2" onclick="showAddPatientModal()">
+                            <i class="fas fa-user-plus"></i>
+                            <span>Add New Patient</span>
+                        </button>
+                    </div>
+                    
+                    <!-- Search and Filter -->
+                    <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-6 mb-6">
+                        <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+                            <div class="md:col-span-2">
+                                <label class="block text-sm font-medium text-gray-700 mb-2">Search Patients</label>
+                                <div class="relative">
+                                    <input type="text" 
+                                           class="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-medical-blue focus:border-transparent"
+                                           placeholder="Search by name, ID, or phone..."
+                                           data-mock="true">
+                                    <i class="fas fa-search absolute left-3 top-3.5 text-gray-400"></i>
+                                </div>
+                            </div>
+                            
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-2">Age Group</label>
+                                <select class="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-medical-blue focus:border-transparent" data-mock="true">
+                                    <option>All Ages</option>
+                                    <option>0-18</option>
+                                    <option>19-35</option>
+                                    <option>36-60</option>
+                                    <option>60+</option>
+                                </select>
+                            </div>
+                            
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-2">Gender</label>
+                                <select class="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-medical-blue focus:border-transparent" data-mock="true">
+                                    <option>All</option>
+                                    <option>Male</option>
+                                    <option>Female</option>
+                                    <option>Other</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Patient List -->
+                    <div class="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
+                        <div class="px-6 py-4 border-b border-gray-200 bg-gray-50">
+                            <h3 class="text-lg font-semibold text-gray-900">Patient Records</h3>
+                        </div>
+                        
+                        <div class="overflow-x-auto">
+                            <table class="w-full">
+                                <thead class="bg-gray-50 border-b border-gray-200">
+                                    <tr>
+                                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Patient</th>
+                                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Contact</th>
+                                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Age/Gender</th>
+                                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Last Visit</th>
+                                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody class="divide-y divide-gray-200" data-mock="true">
+                                    <!-- @MAP: patients.map(patient => ( -->
+                                    <tr class="hover:bg-gray-50 transition-colors">
+                                        <td class="px-6 py-4">
+                                            <div class="flex items-center space-x-3">
+                                                <div class="w-10 h-10 bg-gradient-to-br from-blue-500 to-purple-600 rounded-full flex items-center justify-center">
+                                                    <span class="text-white text-sm font-medium">JD</span>
+                                                </div>
+                                                <div>
+                                                    <p class="font-medium text-gray-900">John Doe</p>
+                                                    <p class="text-sm text-gray-500">ID: PAT-001</p>
+                                                </div>
+                                            </div>
+                                        </td>
+                                        <td class="px-6 py-4">
+                                            <div>
+                                                <p class="text-sm text-gray-900">+1 (555) 123-4567</p>
+                                                <p class="text-sm text-gray-500">john.doe@email.com</p>
+                                            </div>
+                                        </td>
+                                        <td class="px-6 py-4">
+                                            <span class="text-sm text-gray-900">32 • Male</span>
+                                        </td>
+                                        <td class="px-6 py-4">
+                                            <span class="text-sm text-gray-900">March 15, 2024</span>
+                                        </td>
+                                        <td class="px-6 py-4">
+                                            <div class="flex items-center space-x-2">
+                                                <button class="p-2 text-medical-blue hover:bg-blue-50 rounded-lg transition-colors" onclick="showPatientDetails()">
+                                                    <i class="fas fa-eye text-sm"></i>
+                                                </button>
+                                                <button class="p-2 text-success-green hover:bg-green-50 rounded-lg transition-colors" onclick="showPrescriptionCreation()">
+                                                    <i class="fas fa-prescription text-sm"></i>
+                                                </button>
+                                                <button class="p-2 text-gray-600 hover:bg-gray-50 rounded-lg transition-colors">
+                                                    <i class="fas fa-edit text-sm"></i>
+                                                </button>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                    
+                                    <tr class="hover:bg-gray-50 transition-colors">
+                                        <td class="px-6 py-4">
+                                            <div class="flex items-center space-x-3">
+                                                <div class="w-10 h-10 bg-gradient-to-br from-green-500 to-teal-600 rounded-full flex items-center justify-center">
+                                                    <span class="text-white text-sm font-medium">MS</span>
+                                                </div>
+                                                <div>
+                                                    <p class="font-medium text-gray-900">Mary Smith</p>
+                                                    <p class="text-sm text-gray-500">ID: PAT-002</p>
+                                                </div>
+                                            </div>
+                                        </td>
+                                        <td class="px-6 py-4">
+                                            <div>
+                                                <p class="text-sm text-gray-900">+1 (555) 987-6543</p>
+                                                <p class="text-sm text-gray-500">mary.smith@email.com</p>
+                                            </div>
+                                        </td>
+                                        <td class="px-6 py-4">
+                                            <span class="text-sm text-gray-900">28 • Female</span>
+                                        </td>
+                                        <td class="px-6 py-4">
+                                            <span class="text-sm text-gray-900">March 12, 2024</span>
+                                        </td>
+                                        <td class="px-6 py-4">
+                                            <div class="flex items-center space-x-2">
+                                                <button class="p-2 text-medical-blue hover:bg-blue-50 rounded-lg transition-colors">
+                                                    <i class="fas fa-eye text-sm"></i>
+                                                </button>
+                                                <button class="p-2 text-success-green hover:bg-green-50 rounded-lg transition-colors">
+                                                    <i class="fas fa-prescription text-sm"></i>
+                                                </button>
+                                                <button class="p-2 text-gray-600 hover:bg-gray-50 rounded-lg transition-colors">
+                                                    <i class="fas fa-edit text-sm"></i>
+                                                </button>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                    <!-- @END_MAP )) -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Prescription Creation -->
+                <div id="prescriptionCreation" class="hidden">
+                    <div class="mb-8">
+                        <h2 class="text-2xl font-bold text-gray-900 mb-2">Create New Prescription</h2>
+                        <p class="text-gray-600">Use voice input or manual entry to create prescriptions</p>
+                    </div>
+                    
+                    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                        <!-- Patient Selection -->
+                        <div class="lg:col-span-2">
+                            <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-6 mb-6">
+                                <h3 class="text-lg font-semibold text-gray-900 mb-4">Patient Information</h3>
+                                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                    <div>
+                                        <label class="block text-sm font-medium text-gray-700 mb-2">Select Patient</label>
+                                        <select class="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-medical-blue focus:border-transparent" data-mock="true">
+                                            <option>John Doe (PAT-001)</option>
+                                            <option>Mary Smith (PAT-002)</option>
+                                            <option>Robert Johnson (PAT-003)</option>
+                                        </select>
+                                    </div>
+                                    <div>
+                                        <label class="block text-sm font-medium text-gray-700 mb-2">Date</label>
+                                        <input type="date" 
+                                               class="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-medical-blue focus:border-transparent"
+                                               data-mock="true">
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <!-- Voice Recording Section -->
+                            <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-6 mb-6">
+                                <h3 class="text-lg font-semibold text-gray-900 mb-4">Voice Recording</h3>
+                                <div class="text-center p-8 border-2 border-dashed border-gray-200 rounded-xl">
+                                    <div id="recordingState" class="idle">
+                                        <i class="fas fa-microphone text-4xl text-medical-blue mb-4"></i>
+                                        <h4 class="text-lg font-medium text-gray-900 mb-2">Click to Start Recording</h4>
+                                        <p class="text-gray-600 mb-4">Speak naturally about the prescription details</p>
+                                        <button class="bg-medical-blue text-white px-6 py-3 rounded-xl font-semibold hover:bg-blue-700 transition-colors" onclick="toggleRecording()" data-event="click:toggleRecording">
+                                            <span id="recordButtonText">Start Recording</span>
+                                        </button>
+                                    </div>
+                                </div>
+                                
+                                <!-- Transcribed Text -->
+                                <div id="transcriptionSection" class="mt-6 hidden">
+                                    <label class="block text-sm font-medium text-gray-700 mb-2">Transcribed Text</label>
+                                    <textarea class="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-medical-blue focus:border-transparent resize-none" 
+                                              rows="4" 
+                                              placeholder="Transcribed text will appear here..."
+                                              data-mock="true"></textarea>
+                                    <button class="mt-3 bg-success-green text-white px-4 py-2 rounded-lg font-medium hover:bg-green-700 transition-colors" onclick="processPrescription()">
+                                        <i class="fas fa-magic mr-2"></i>
+                                        Process Prescription
+                                    </button>
+                                </div>
+                            </div>
+                            
+                            <!-- Manual Prescription Entry -->
+                            <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-6">
+                                <div class="flex items-center justify-between mb-4">
+                                    <h3 class="text-lg font-semibold text-gray-900">Prescription Details</h3>
+                                    <button class="text-medical-blue hover:text-blue-700 font-medium" onclick="addMedicine()">
+                                        <i class="fas fa-plus mr-1"></i>
+                                        Add Medicine
+                                    </button>
+                                </div>
+                                
+                                <!-- @MAP: medicines.map((medicine, index) => ( -->
+                                <div class="border border-gray-200 rounded-xl p-4 mb-4 last:mb-0" data-mock="true">
+                                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                        <div>
+                                            <label class="block text-sm font-medium text-gray-700 mb-2">Medicine Name</label>
+                                            <input type="text" 
+                                                   class="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-medical-blue focus:border-transparent"
+                                                   placeholder="e.g., Amoxicillin"
+                                                   data-mock="true">
+                                        </div>
+                                        <div>
+                                            <label class="block text-sm font-medium text-gray-700 mb-2">Dosage</label>
+                                            <input type="text" 
+                                                   class="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-medical-blue focus:border-transparent"
+                                                   placeholder="e.g., 500mg"
+                                                   data-mock="true">
+                                        </div>
+                                        <div>
+                                            <label class="block text-sm font-medium text-gray-700 mb-2">Frequency</label>
+                                            <select class="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-medical-blue focus:border-transparent" data-mock="true">
+                                                <option>Once daily</option>
+                                                <option>Twice daily</option>
+                                                <option>Three times daily</option>
+                                                <option>Four times daily</option>
+                                                <option>As needed</option>
+                                            </select>
+                                        </div>
+                                        <div>
+                                            <label class="block text-sm font-medium text-gray-700 mb-2">Duration</label>
+                                            <input type="text" 
+                                                   class="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-medical-blue focus:border-transparent"
+                                                   placeholder="e.g., 7 days"
+                                                   data-mock="true">
+                                        </div>
+                                    </div>
+                                    <div class="mt-4">
+                                        <label class="block text-sm font-medium text-gray-700 mb-2">Instructions</label>
+                                        <textarea class="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-medical-blue focus:border-transparent resize-none" 
+                                                  rows="2" 
+                                                  placeholder="Take after meals..."
+                                                  data-mock="true"></textarea>
+                                    </div>
+                                </div>
+                                <!-- @END_MAP )) -->
+                                
+                                <!-- Additional Notes -->
+                                <div class="mt-6">
+                                    <label class="block text-sm font-medium text-gray-700 mb-2">Additional Notes</label>
+                                    <textarea class="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-medical-blue focus:border-transparent resize-none" 
+                                              rows="3" 
+                                              placeholder="Any additional instructions or notes..."
+                                              data-mock="true"></textarea>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Prescription Preview -->
+                        <div class="lg:col-span-1">
+                            <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-6 sticky top-6">
+                                <h3 class="text-lg font-semibold text-gray-900 mb-4">Prescription Preview</h3>
+                                
+                                <!-- Preview Card -->
+                                <div class="bg-gradient-to-br from-medical-blue to-blue-600 text-white p-6 rounded-xl mb-4">
+                                    <div class="text-center mb-4">
+                                        <h4 class="font-bold text-lg">Dr. Sarah Johnson</h4>
+                                        <p class="text-blue-100">MD Cardiology</p>
+                                        <p class="text-blue-100 text-sm">License: MD-123456</p>
+                                    </div>
+                                    <div class="border-t border-blue-400 pt-4">
+                                        <p class="text-sm font-medium mb-1">Patient: <span data-bind="selectedPatient.name">John Doe</span></p>
+                                        <p class="text-sm font-medium mb-1">Age: <span data-bind="selectedPatient.age">32</span></p>
+                                        <p class="text-sm font-medium">Date: <span data-bind="prescription.date">March 16, 2024</span></p>
+                                    </div>
+                                </div>
+                                
+                                <!-- Prescription Items -->
+                                <div class="space-y-3 mb-6">
+                                    <div class="p-3 bg-gray-50 rounded-lg" data-mock="true">
+                                        <p class="font-medium text-gray-900">Amoxicillin 500mg</p>
+                                        <p class="text-sm text-gray-600">3 times daily • 7 days</p>
+                                        <p class="text-sm text-gray-500">Take after meals</p>
+                                    </div>
+                                    <div class="p-3 bg-gray-50 rounded-lg" data-mock="true">
+                                        <p class="font-medium text-gray-900">Ibuprofen 400mg</p>
+                                        <p class="text-sm text-gray-600">As needed • 5 days</p>
+                                        <p class="text-sm text-gray-500">For pain relief</p>
+                                    </div>
+                                </div>
+                                
+                                <!-- Action Buttons -->
+                                <div class="space-y-3">
+                                    <button class="w-full bg-success-green text-white py-3 rounded-xl font-semibold hover:bg-green-700 transition-colors" onclick="savePrescription()">
+                                        <i class="fas fa-save mr-2"></i>
+                                        Save Prescription
+                                    </button>
+                                    <button class="w-full bg-medical-blue text-white py-3 rounded-xl font-semibold hover:bg-blue-700 transition-colors" onclick="generatePDF()">
+                                        <i class="fas fa-file-pdf mr-2"></i>
+                                        Generate PDF
+                                    </button>
+                                    <button class="w-full border border-gray-300 text-gray-700 py-3 rounded-xl font-semibold hover:bg-gray-50 transition-colors">
+                                        <i class="fas fa-envelope mr-2"></i>
+                                        Email to Patient
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Patient Details Modal -->
+                <div id="patientDetailsModal" class="fixed inset-0 bg-black bg-opacity-50 z-50 hidden flex items-center justify-center p-4">
+                    <div class="bg-white rounded-2xl shadow-2xl max-w-4xl w-full max-h-screen overflow-y-auto">
+                        <div class="flex items-center justify-between p-6 border-b border-gray-200">
+                            <h2 class="text-2xl font-bold text-gray-900">Patient Details</h2>
+                            <button class="p-2 text-gray-400 hover:text-gray-600 transition-colors" onclick="closePatientDetailsModal()">
+                                <i class="fas fa-times text-xl"></i>
+                            </button>
+                        </div>
+                        
+                        <div class="p-6">
+                            <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                                <!-- Patient Info -->
+                                <div class="lg:col-span-1">
+                                    <div class="text-center mb-6">
+                                        <div class="w-24 h-24 bg-gradient-to-br from-blue-500 to-purple-600 rounded-full flex items-center justify-center mx-auto mb-4">
+                                            <span class="text-white text-2xl font-bold">JD</span>
+                                        </div>
+                                        <h3 class="text-xl font-bold text-gray-900" data-bind="patient.name">John Doe</h3>
+                                        <p class="text-gray-600" data-bind="patient.id">PAT-001</p>
+                                    </div>
+                                    
+                                    <div class="space-y-4">
+                                        <div>
+                                            <label class="block text-sm font-medium text-gray-500 mb-1">Age</label>
+                                            <p class="text-gray-900" data-bind="patient.age">32 years</p>
+                                        </div>
+                                        <div>
+                                            <label class="block text-sm font-medium text-gray-500 mb-1">Gender</label>
+                                            <p class="text-gray-900" data-bind="patient.gender">Male</p>
+                                        </div>
+                                        <div>
+                                            <label class="block text-sm font-medium text-gray-500 mb-1">Phone</label>
+                                            <p class="text-gray-900" data-bind="patient.phone">+1 (555) 123-4567</p>
+                                        </div>
+                                        <div>
+                                            <label class="block text-sm font-medium text-gray-500 mb-1">Email</label>
+                                            <p class="text-gray-900" data-bind="patient.email">john.doe@email.com</p>
+                                        </div>
+                                        <div>
+                                            <label class="block text-sm font-medium text-gray-500 mb-1">Address</label>
+                                            <p class="text-gray-900" data-bind="patient.address">123 Main St, New York, NY 10001</p>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <!-- Medical History & Prescriptions -->
+                                <div class="lg:col-span-2">
+                                    <div class="mb-6">
+                                        <h4 class="text-lg font-semibold text-gray-900 mb-4">Medical History</h4>
+                                        <div class="bg-gray-50 rounded-xl p-4">
+                                            <div class="space-y-3">
+                                                <div class="flex justify-between">
+                                                    <span class="text-gray-600">Blood Pressure:</span>
+                                                    <span class="font-medium text-gray-900">120/80 mmHg</span>
+                                                </div>
+                                                <div class="flex justify-between">
+                                                    <span class="text-gray-600">Blood Type:</span>
+                                                    <span class="font-medium text-gray-900">O+</span>
+                                                </div>
+                                                <div class="flex justify-between">
+                                                    <span class="text-gray-600">Allergies:</span>
+                                                    <span class="font-medium text-gray-900">Penicillin</span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    
+                                    <div>
+                                        <h4 class="text-lg font-semibold text-gray-900 mb-4">Recent Prescriptions</h4>
+                                        <div class="space-y-4">
+                                            <div class="border border-gray-200 rounded-xl p-4" data-mock="true">
+                                                <div class="flex items-center justify-between mb-2">
+                                                    <h5 class="font-medium text-gray-900">March 15, 2024</h5>
+                                                    <span class="text-sm text-gray-500">Dr. Sarah Johnson</span>
+                                                </div>
+                                                <div class="space-y-2">
+                                                    <div class="flex justify-between">
+                                                        <span class="text-gray-600">Amoxicillin 500mg</span>
+                                                        <span class="text-sm text-gray-500">3x daily, 7 days</span>
+                                                    </div>
+                                                    <div class="flex justify-between">
+                                                        <span class="text-gray-600">Ibuprofen 400mg</span>
+                                                        <span class="text-sm text-gray-500">As needed, 5 days</span>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            
+                                            <div class="border border-gray-200 rounded-xl p-4" data-mock="true">
+                                                <div class="flex items-center justify-between mb-2">
+                                                    <h5 class="font-medium text-gray-900">March 1, 2024</h5>
+                                                    <span class="text-sm text-gray-500">Dr. Sarah Johnson</span>
+                                                </div>
+                                                <div class="space-y-2">
+                                                    <div class="flex justify-between">
+                                                        <span class="text-gray-600">Lisinopril 10mg</span>
+                                                        <span class="text-sm text-gray-500">1x daily, 30 days</span>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Add Patient Modal -->
+                <div id="addPatientModal" class="fixed inset-0 bg-black bg-opacity-50 z-50 hidden flex items-center justify-center p-4">
+                    <div class="bg-white rounded-2xl shadow-2xl max-w-2xl w-full max-h-screen overflow-y-auto">
+                        <div class="flex items-center justify-between p-6 border-b border-gray-200">
+                            <h2 class="text-2xl font-bold text-gray-900">Add New Patient</h2>
+                            <button class="p-2 text-gray-400 hover:text-gray-600 transition-colors" onclick="closeAddPatientModal()">
+                                <i class="fas fa-times text-xl"></i>
+                            </button>
+                        </div>
+                        
+                        <form class="p-6" data-mock="true">
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700 mb-2">First Name *</label>
+                                    <input type="text" class="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-medical-blue focus:border-transparent" data-mock="true">
+                                </div>
+                                
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700 mb-2">Last Name *</label>
+                                    <input type="text" class="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-medical-blue focus:border-transparent" data-mock="true">
+                                </div>
+                                
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700 mb-2">Date of Birth *</label>
+                                    <input type="date" class="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-medical-blue focus:border-transparent" data-mock="true">
+                                </div>
+                                
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700 mb-2">Gender *</label>
+                                    <select class="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-medical-blue focus:border-transparent" data-mock="true">
+                                        <option>Male</option>
+                                        <option>Female</option>
+                                        <option>Other</option>
+                                    </select>
+                                </div>
+                                
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700 mb-2">Phone Number *</label>
+                                    <input type="tel" class="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-medical-blue focus:border-transparent" data-mock="true">
+                                </div>
+                                
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700 mb-2">Email Address</label>
+                                    <input type="email" class="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-medical-blue focus:border-transparent" data-mock="true">
+                                </div>
+                                
+                                <div class="md:col-span-2">
+                                    <label class="block text-sm font-medium text-gray-700 mb-2">Address</label>
+                                    <textarea class="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-medical-blue focus:border-transparent resize-none" rows="3" data-mock="true"></textarea>
+                                </div>
+                                
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700 mb-2">Blood Type</label>
+                                    <select class="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-medical-blue focus:border-transparent" data-mock="true">
+                                        <option>Not specified</option>
+                                        <option>A+</option>
+                                        <option>A-</option>
+                                        <option>B+</option>
+                                        <option>B-</option>
+                                        <option>AB+</option>
+                                        <option>AB-</option>
+                                        <option>O+</option>
+                                        <option>O-</option>
+                                    </select>
+                                </div>
+                                
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700 mb-2">Emergency Contact</label>
+                                    <input type="tel" class="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-medical-blue focus:border-transparent" data-mock="true">
+                                </div>
+                                
+                                <div class="md:col-span-2">
+                                    <label class="block text-sm font-medium text-gray-700 mb-2">Allergies</label>
+                                    <textarea class="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-medical-blue focus:border-transparent resize-none" rows="2" placeholder="List any known allergies..." data-mock="true"></textarea>
+                                </div>
+                                
+                                <div class="md:col-span-2">
+                                    <label class="block text-sm font-medium text-gray-700 mb-2">Medical History</label>
+                                    <textarea class="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-medical-blue focus:border-transparent resize-none" rows="3" placeholder="Previous conditions, surgeries, etc..." data-mock="true"></textarea>
+                                </div>
+                            </div>
+                            
+                            <div class="flex space-x-4 mt-8">
+                                <button type="button" class="flex-1 bg-gray-300 text-gray-700 py-3 rounded-xl font-semibold hover:bg-gray-400 transition-colors" onclick="closeAddPatientModal()">
+                                    Cancel
+                                </button>
+                                <button type="submit" class="flex-1 bg-medical-blue text-white py-3 rounded-xl font-semibold hover:bg-blue-700 transition-colors">
+                                    Add Patient
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+
+            </main>
+        </div>
+    </div>
+
+    <script>
+        // TODO: Implement business logic, API calls, and state management
+        
+        // Simple view switching functionality for demo purposes
+        (function() {
+            const views = {
+                loginPage: document.getElementById('loginPage'),
+                registrationPage: document.getElementById('registrationPage'),
+                dashboardPage: document.getElementById('dashboardPage'),
+                dashboardContent: document.getElementById('dashboardContent'),
+                patientManagement: document.getElementById('patientManagement'),
+                prescriptionCreation: document.getElementById('prescriptionCreation'),
+                patientDetailsModal: document.getElementById('patientDetailsModal'),
+                addPatientModal: document.getElementById('addPatientModal')
+            };
+
+            function hideAllViews() {
+                Object.values(views).forEach(view => {
+                    if (view) view.classList.add('hidden');
+                });
+            }
+
+            function showView(viewName) {
+                hideAllViews();
+                if (views[viewName]) {
+                    views[viewName].classList.remove('hidden');
+                }
+            }
+
+            // Navigation functions
+            window.showLogin = () => showView('loginPage');
+            window.showRegistration = () => showView('registrationPage');
+            
+            window.showDashboard = () => {
+                showView('dashboardPage');
+                showView('dashboardContent');
+            };
+            
+            window.showDashboardContent = () => {
+                views.dashboardContent.classList.remove('hidden');
+                views.patientManagement.classList.add('hidden');
+                views.prescriptionCreation.classList.add('hidden');
+            };
+            
+            window.showPatientManagement = () => {
+                views.dashboardContent.classList.add('hidden');
+                views.patientManagement.classList.remove('hidden');
+                views.prescriptionCreation.classList.add('hidden');
+            };
+            
+            window.showPrescriptionCreation = () => {
+                views.dashboardContent.classList.add('hidden');
+                views.patientManagement.classList.add('hidden');
+                views.prescriptionCreation.classList.remove('hidden');
+            };
+
+            // Modal functions
+            window.showPatientDetails = () => {
+                views.patientDetailsModal.classList.remove('hidden');
+            };
+            
+            window.closePatientDetailsModal = () => {
+                views.patientDetailsModal.classList.add('hidden');
+            };
+            
+            window.showAddPatientModal = () => {
+                views.addPatientModal.classList.remove('hidden');
+            };
+            
+            window.closeAddPatientModal = () => {
+                views.addPatientModal.classList.add('hidden');
+            };
+
+            // Recording functionality simulation
+            let isRecording = false;
+            
+            window.toggleRecording = () => {
+                const recordButton = document.getElementById('recordButtonText');
+                const recordingState = document.getElementById('recordingState');
+                const transcriptionSection = document.getElementById('transcriptionSection');
+                
+                if (!isRecording) {
+                    isRecording = true;
+                    recordButton.textContent = 'Stop Recording';
+                    recordingState.innerHTML = `
+                        <i class="fas fa-microphone-alt text-4xl text-red-500 animate-pulse mb-4"></i>
+                        <h4 class="text-lg font-medium text-gray-900 mb-2">Recording...</h4>
+                        <p class="text-gray-600 mb-4">Speak clearly about the prescription</p>
+                        <button class="bg-red-500 text-white px-6 py-3 rounded-xl font-semibold hover:bg-red-600 transition-colors" onclick="toggleRecording()">
+                            <span id="recordButtonText">Stop Recording</span>
+                        </button>
+                    `;
+                    
+                    // Simulate recording completion after 3 seconds
+                    setTimeout(() => {
+                        if (isRecording) {
+                            toggleRecording();
+                            transcriptionSection.classList.remove('hidden');
+                            transcriptionSection.querySelector('textarea').value = "Patient needs Amoxicillin 500mg three times daily for 7 days and Ibuprofen 400mg as needed for pain relief for 5 days. Take Amoxicillin after meals.";
+                        }
+                    }, 3000);
+                } else {
+                    isRecording = false;
+                    recordButton.textContent = 'Start Recording';
+                    recordingState.innerHTML = `
+                        <i class="fas fa-check-circle text-4xl text-success-green mb-4"></i>
+                        <h4 class="text-lg font-medium text-gray-900 mb-2">Recording Complete</h4>
+                        <p class="text-gray-600 mb-4">Processing speech to text...</p>
+                        <button class="bg-medical-blue text-white px-6 py-3 rounded-xl font-semibold hover:bg-blue-700 transition-colors" onclick="toggleRecording()">
+                            <span id="recordButtonText">Record Again</span>
+                        </button>
+                    `;
+                }
+            };
+
+            // Prescription processing simulation
+            window.processPrescription = () => {
+                // TODO: Send transcribed text to backend for NLP processing
+                alert('Prescription processed successfully! Medicines have been extracted and added to the prescription form.');
+            };
+
+            // Other action functions
+            window.addMedicine = () => {
+                alert('Add medicine functionality would create a new medicine entry form');
+            };
+
+            window.savePrescription = () => {
+                alert('Prescription saved successfully!');
+            };
+
+            window.generatePDF = () => {
+                alert('PDF generation in progress... This would create a professional prescription PDF.');
+            };
+
+            // Close modals when clicking outside
+            views.patientDetailsModal?.addEventListener('click', (e) => {
+                if (e.target === views.patientDetailsModal) {
+                    window.closePatientDetailsModal();
+                }
+            });
+
+            views.addPatientModal?.addEventListener('click', (e) => {
+                if (e.target === views.addPatientModal) {
+                    window.closeAddPatientModal();
+                }
+            });
+        })();
+    </script>
+</body>
+</html>

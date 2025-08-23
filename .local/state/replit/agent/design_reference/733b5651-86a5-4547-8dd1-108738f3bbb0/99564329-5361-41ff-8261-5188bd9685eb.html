@@ -1,0 +1,626 @@
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MedScript Pro - Doctor Prescription System</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        medical: {
+                            blue: '#2563EB',
+                            green: '#059669',
+                            red: '#DC2626',
+                            gray: '#64748B',
+                            light: '#F8FAFC'
+                        }
+                    },
+                    fontFamily: {
+                        'inter': ['Inter', 'system-ui', 'sans-serif']
+                    }
+                }
+            }
+        };
+    </script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body class="font-inter bg-medical-light min-h-screen">
+    <!-- @COMPONENT: AuthenticationModal -->
+    <div id="loginModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+        <div class="bg-white rounded-xl shadow-2xl w-full max-w-md mx-4">
+            <div class="p-8">
+                <div class="text-center mb-8">
+                    <div class="inline-flex items-center justify-center w-16 h-16 bg-medical-blue rounded-full mb-4">
+                        <i class="fas fa-user-md text-white text-2xl"></i>
+                    </div>
+                    <h1 class="text-2xl font-bold text-gray-900 mb-2">MedScript Pro</h1>
+                    <p class="text-medical-gray">Secure Doctor Portal</p>
+                </div>
+                
+                <form data-implementation="Should validate credentials and authenticate doctor">
+                    <div class="space-y-6">
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Medical License ID</label>
+                            <input type="text" data-bind="doctor.licenseId" placeholder="Enter your license number" 
+                                   class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-medical-blue focus:border-transparent">
+                        </div>
+                        
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Password</label>
+                            <input type="password" data-bind="doctor.password" placeholder="Enter your password"
+                                   class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-medical-blue focus:border-transparent">
+                        </div>
+                        
+                        <button type="submit" data-event="click:handleLogin" 
+                                class="w-full bg-medical-blue text-white py-3 rounded-lg font-semibold hover:bg-blue-700 transition-colors">
+                            Sign In
+                        </button>
+                    </div>
+                </form>
+                
+                <div class="mt-6 text-center">
+                    <a href="#" class="text-medical-blue hover:underline text-sm">Forgot password?</a>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- @END_COMPONENT: AuthenticationModal -->
+
+    <!-- @COMPONENT: MainApplication [authenticated:true] -->
+    <div id="mainApp" class="hidden">
+        <!-- @COMPONENT: Sidebar -->
+        <div class="fixed left-0 top-0 h-full w-64 bg-white shadow-lg border-r border-gray-200 z-40">
+            <div class="p-6 border-b border-gray-200">
+                <div class="flex items-center space-x-3">
+                    <div class="w-10 h-10 bg-medical-blue rounded-lg flex items-center justify-center">
+                        <i class="fas fa-stethoscope text-white"></i>
+                    </div>
+                    <div>
+                        <h2 class="font-bold text-gray-900">MedScript Pro</h2>
+                        <p class="text-sm text-medical-gray" data-bind="doctor.name">Dr. Sarah Wilson</p>
+                    </div>
+                </div>
+            </div>
+            
+            <nav class="p-4 space-y-2">
+                <a href="#dashboard" data-event="click:navigateTo" 
+                   class="flex items-center space-x-3 px-4 py-3 bg-medical-blue text-white rounded-lg">
+                    <i class="fas fa-home"></i>
+                    <span>Dashboard</span>
+                </a>
+                <a href="#patients" data-event="click:navigateTo" 
+                   class="flex items-center space-x-3 px-4 py-3 text-medical-gray hover:bg-gray-100 rounded-lg transition-colors">
+                    <i class="fas fa-users"></i>
+                    <span>Patients</span>
+                </a>
+                <a href="#prescriptions" data-event="click:navigateTo" 
+                   class="flex items-center space-x-3 px-4 py-3 text-medical-gray hover:bg-gray-100 rounded-lg transition-colors">
+                    <i class="fas fa-prescription-bottle-alt"></i>
+                    <span>Prescriptions</span>
+                </a>
+                <a href="#voice-prescription" data-event="click:navigateTo" 
+                   class="flex items-center space-x-3 px-4 py-3 text-medical-gray hover:bg-gray-100 rounded-lg transition-colors">
+                    <i class="fas fa-microphone"></i>
+                    <span>Voice Prescription</span>
+                </a>
+            </nav>
+            
+            <div class="absolute bottom-4 left-4 right-4">
+                <button data-event="click:handleLogout" 
+                        class="w-full flex items-center space-x-3 px-4 py-3 text-medical-red hover:bg-red-50 rounded-lg transition-colors">
+                    <i class="fas fa-sign-out-alt"></i>
+                    <span>Sign Out</span>
+                </button>
+            </div>
+        </div>
+        <!-- @END_COMPONENT: Sidebar -->
+
+        <!-- @COMPONENT: MainContent -->
+        <div class="ml-64 min-h-screen bg-medical-light">
+            <!-- @COMPONENT: Header -->
+            <header class="bg-white shadow-sm border-b border-gray-200 px-8 py-4">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <h1 class="text-2xl font-bold text-gray-900" data-bind="currentPage.title">Dashboard</h1>
+                        <p class="text-medical-gray" data-bind="currentPage.subtitle">Welcome back, manage your patients and prescriptions</p>
+                    </div>
+                    <div class="flex items-center space-x-4">
+                        <div class="relative">
+                            <i class="fas fa-bell text-medical-gray text-xl cursor-pointer hover:text-medical-blue"></i>
+                            <span class="absolute -top-1 -right-1 w-3 h-3 bg-medical-red rounded-full"></span>
+                        </div>
+                        <div class="w-10 h-10 bg-medical-blue rounded-full flex items-center justify-center">
+                            <span class="text-white font-semibold" data-bind="doctor.initials">SW</span>
+                        </div>
+                    </div>
+                </div>
+            </header>
+            <!-- @END_COMPONENT: Header -->
+
+            <!-- @COMPONENT: DashboardContent -->
+            <main class="p-8">
+                <!-- Stats Cards -->
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+                    <div class="bg-white rounded-xl shadow-sm p-6 border border-gray-200">
+                        <div class="flex items-center justify-between">
+                            <div>
+                                <p class="text-medical-gray text-sm font-medium">Total Patients</p>
+                                <p class="text-3xl font-bold text-gray-900" data-bind="stats.totalPatients">1,247</p>
+                            </div>
+                            <div class="w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center">
+                                <i class="fas fa-users text-medical-blue text-xl"></i>
+                            </div>
+                        </div>
+                        <div class="flex items-center mt-4 text-sm">
+                            <span class="text-medical-green">+12%</span>
+                            <span class="text-medical-gray ml-2">from last month</span>
+                        </div>
+                    </div>
+                    
+                    <div class="bg-white rounded-xl shadow-sm p-6 border border-gray-200">
+                        <div class="flex items-center justify-between">
+                            <div>
+                                <p class="text-medical-gray text-sm font-medium">Today's Appointments</p>
+                                <p class="text-3xl font-bold text-gray-900" data-bind="stats.todayAppointments">23</p>
+                            </div>
+                            <div class="w-12 h-12 bg-green-100 rounded-full flex items-center justify-center">
+                                <i class="fas fa-calendar-check text-medical-green text-xl"></i>
+                            </div>
+                        </div>
+                        <div class="flex items-center mt-4 text-sm">
+                            <span class="text-medical-green">+5 completed</span>
+                        </div>
+                    </div>
+                    
+                    <div class="bg-white rounded-xl shadow-sm p-6 border border-gray-200">
+                        <div class="flex items-center justify-between">
+                            <div>
+                                <p class="text-medical-gray text-sm font-medium">Prescriptions Today</p>
+                                <p class="text-3xl font-bold text-gray-900" data-bind="stats.prescriptionsToday">18</p>
+                            </div>
+                            <div class="w-12 h-12 bg-purple-100 rounded-full flex items-center justify-center">
+                                <i class="fas fa-prescription-bottle-alt text-purple-600 text-xl"></i>
+                            </div>
+                        </div>
+                        <div class="flex items-center mt-4 text-sm">
+                            <span class="text-medical-gray">3 pending review</span>
+                        </div>
+                    </div>
+                    
+                    <div class="bg-white rounded-xl shadow-sm p-6 border border-gray-200">
+                        <div class="flex items-center justify-between">
+                            <div>
+                                <p class="text-medical-gray text-sm font-medium">Voice Prescriptions</p>
+                                <p class="text-3xl font-bold text-gray-900" data-bind="stats.voicePrescriptions">12</p>
+                            </div>
+                            <div class="w-12 h-12 bg-orange-100 rounded-full flex items-center justify-center">
+                                <i class="fas fa-microphone text-orange-600 text-xl"></i>
+                            </div>
+                        </div>
+                        <div class="flex items-center mt-4 text-sm">
+                            <span class="text-medical-green">67% accuracy</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Quick Actions -->
+                <div class="grid grid-cols-1 lg:grid-cols-3 gap-8 mb-8">
+                    <div class="lg:col-span-2">
+                        <div class="bg-white rounded-xl shadow-sm border border-gray-200">
+                            <div class="p-6 border-b border-gray-200">
+                                <h3 class="text-lg font-semibold text-gray-900">Recent Patients</h3>
+                            </div>
+                            <div class="p-6">
+                                <!-- @MAP: recentPatients.map(patient => ( -->
+                                <div class="flex items-center justify-between py-3 border-b border-gray-100 last:border-b-0">
+                                    <div class="flex items-center space-x-4">
+                                        <div class="w-10 h-10 bg-gray-200 rounded-full flex items-center justify-center">
+                                            <span class="text-sm font-semibold text-gray-600" data-bind="patient.initials">JD</span>
+                                        </div>
+                                        <div>
+                                            <p class="font-medium text-gray-900" data-bind="patient.name">John Doe</p>
+                                            <p class="text-sm text-medical-gray" data-bind="patient.lastVisit">Last visit: Oct 15, 2024</p>
+                                        </div>
+                                    </div>
+                                    <div class="flex items-center space-x-2">
+                                        <span class="px-2 py-1 text-xs font-medium bg-green-100 text-medical-green rounded-full" data-bind="patient.status">Healthy</span>
+                                        <button data-event="click:viewPatient" data-patient-id="patient.id" 
+                                                class="text-medical-blue hover:bg-blue-50 p-2 rounded-lg transition-colors">
+                                            <i class="fas fa-eye"></i>
+                                        </button>
+                                    </div>
+                                </div>
+                                <!-- @END_MAP )) -->
+                                
+                                <div class="flex items-center justify-between py-3 border-b border-gray-100">
+                                    <div class="flex items-center space-x-4">
+                                        <div class="w-10 h-10 bg-gray-200 rounded-full flex items-center justify-center">
+                                            <span class="text-sm font-semibold text-gray-600">MS</span>
+                                        </div>
+                                        <div>
+                                            <p class="font-medium text-gray-900">Maria Santos</p>
+                                            <p class="text-sm text-medical-gray">Last visit: Oct 14, 2024</p>
+                                        </div>
+                                    </div>
+                                    <div class="flex items-center space-x-2">
+                                        <span class="px-2 py-1 text-xs font-medium bg-yellow-100 text-yellow-800 rounded-full">Follow-up</span>
+                                        <button class="text-medical-blue hover:bg-blue-50 p-2 rounded-lg transition-colors">
+                                            <i class="fas fa-eye"></i>
+                                        </button>
+                                    </div>
+                                </div>
+                                
+                                <div class="flex items-center justify-between py-3">
+                                    <div class="flex items-center space-x-4">
+                                        <div class="w-10 h-10 bg-gray-200 rounded-full flex items-center justify-center">
+                                            <span class="text-sm font-semibold text-gray-600">RJ</span>
+                                        </div>
+                                        <div>
+                                            <p class="font-medium text-gray-900">Robert Johnson</p>
+                                            <p class="text-sm text-medical-gray">Last visit: Oct 13, 2024</p>
+                                        </div>
+                                    </div>
+                                    <div class="flex items-center space-x-2">
+                                        <span class="px-2 py-1 text-xs font-medium bg-green-100 text-medical-green rounded-full">Healthy</span>
+                                        <button class="text-medical-blue hover:bg-blue-50 p-2 rounded-lg transition-colors">
+                                            <i class="fas fa-eye"></i>
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div>
+                        <div class="bg-white rounded-xl shadow-sm border border-gray-200">
+                            <div class="p-6 border-b border-gray-200">
+                                <h3 class="text-lg font-semibold text-gray-900">Quick Actions</h3>
+                            </div>
+                            <div class="p-6 space-y-4">
+                                <button data-event="click:navigateToNewPatient" 
+                                        class="w-full flex items-center space-x-3 p-4 bg-medical-blue text-white rounded-lg hover:bg-blue-700 transition-colors">
+                                    <i class="fas fa-user-plus"></i>
+                                    <span>Add New Patient</span>
+                                </button>
+                                
+                                <button data-event="click:navigateToVoicePrescription" 
+                                        class="w-full flex items-center space-x-3 p-4 bg-medical-green text-white rounded-lg hover:bg-green-700 transition-colors">
+                                    <i class="fas fa-microphone"></i>
+                                    <span>Voice Prescription</span>
+                                </button>
+                                
+                                <button data-event="click:navigateToSearch" 
+                                        class="w-full flex items-center space-x-3 p-4 border-2 border-medical-blue text-medical-blue rounded-lg hover:bg-blue-50 transition-colors">
+                                    <i class="fas fa-search"></i>
+                                    <span>Search Patients</span>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Voice Prescription Interface -->
+                <div class="bg-white rounded-xl shadow-sm border border-gray-200 mb-8">
+                    <div class="p-6 border-b border-gray-200">
+                        <h3 class="text-lg font-semibold text-gray-900">Voice Prescription Assistant</h3>
+                        <p class="text-medical-gray mt-1">Record your prescription and let AI extract the details</p>
+                    </div>
+                    <div class="p-6">
+                        <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                            <div>
+                                <div class="text-center">
+                                    <!-- @STATE: isRecording:boolean = false, recordingTime:number = 0 -->
+                                    <div class="inline-flex items-center justify-center w-32 h-32 bg-red-100 rounded-full mb-6" data-bind="recordingState">
+                                        <button data-event="click:toggleRecording" data-implementation="Should use Web Speech API for voice recording"
+                                                class="w-24 h-24 bg-medical-red text-white rounded-full hover:bg-red-700 transition-colors flex items-center justify-center">
+                                            <i class="fas fa-microphone text-3xl"></i>
+                                        </button>
+                                    </div>
+                                    <p class="text-medical-gray mb-4">Click to start recording prescription</p>
+                                    <div class="text-sm text-medical-gray" data-bind="recordingStatus">Ready to record</div>
+                                </div>
+                                
+                                <div class="mt-6">
+                                    <label class="block text-sm font-medium text-gray-700 mb-2">Patient Selection</label>
+                                    <select data-bind="selectedPatient" 
+                                            class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-medical-blue focus:border-transparent">
+                                        <option value="">Select a patient...</option>
+                                        <option value="1">John Doe - #PT001</option>
+                                        <option value="2">Maria Santos - #PT002</option>
+                                        <option value="3">Robert Johnson - #PT003</option>
+                                    </select>
+                                </div>
+                            </div>
+                            
+                            <div>
+                                <div class="bg-gray-50 rounded-lg p-4 mb-4">
+                                    <h4 class="font-medium text-gray-900 mb-2">Transcribed Text</h4>
+                                    <div class="min-h-24 text-sm text-medical-gray" data-bind="transcribedText" data-implementation="Display real-time transcription from Web Speech API">
+                                        Prescription will appear here as you speak...
+                                    </div>
+                                </div>
+                                
+                                <div class="space-y-4">
+                                    <div>
+                                        <h4 class="font-medium text-gray-900 mb-2">Extracted Information</h4>
+                                        <div class="bg-green-50 rounded-lg p-4" data-implementation="Display NLP extracted data">
+                                            <div class="text-sm">
+                                                <p><strong>Medicines:</strong> <span data-bind="extractedMedicines">None detected</span></p>
+                                                <p class="mt-2"><strong>Tests:</strong> <span data-bind="extractedTests">None detected</span></p>
+                                                <p class="mt-2"><strong>Instructions:</strong> <span data-bind="extractedInstructions">None detected</span></p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    
+                                    <button data-event="click:generatePrescription" data-implementation="Should process transcription and generate PDF"
+                                            class="w-full bg-medical-blue text-white py-3 rounded-lg font-semibold hover:bg-blue-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed">
+                                        Generate Prescription PDF
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Patient Search Interface -->
+                <div class="bg-white rounded-xl shadow-sm border border-gray-200">
+                    <div class="p-6 border-b border-gray-200">
+                        <div class="flex items-center justify-between">
+                            <h3 class="text-lg font-semibold text-gray-900">Patient Management</h3>
+                            <button data-event="click:openAddPatientModal" 
+                                    class="bg-medical-blue text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors">
+                                <i class="fas fa-plus mr-2"></i>Add Patient
+                            </button>
+                        </div>
+                    </div>
+                    <div class="p-6">
+                        <div class="mb-6">
+                            <div class="relative">
+                                <i class="fas fa-search absolute left-3 top-1/2 transform -translate-y-1/2 text-medical-gray"></i>
+                                <input type="text" data-bind="searchQuery" data-event="input:handleSearch"
+                                       placeholder="Search patients by name, ID, or phone..."
+                                       class="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-medical-blue focus:border-transparent">
+                            </div>
+                        </div>
+                        
+                        <div class="overflow-x-auto">
+                            <table class="w-full">
+                                <thead>
+                                    <tr class="border-b border-gray-200">
+                                        <th class="text-left py-3 px-4 text-sm font-semibold text-gray-900">Patient</th>
+                                        <th class="text-left py-3 px-4 text-sm font-semibold text-gray-900">ID</th>
+                                        <th class="text-left py-3 px-4 text-sm font-semibold text-gray-900">Phone</th>
+                                        <th class="text-left py-3 px-4 text-sm font-semibold text-gray-900">Last Visit</th>
+                                        <th class="text-left py-3 px-4 text-sm font-semibold text-gray-900">Status</th>
+                                        <th class="text-right py-3 px-4 text-sm font-semibold text-gray-900">Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody class="divide-y divide-gray-100">
+                                    <!-- @MAP: filteredPatients.map(patient => ( -->
+                                    <tr class="hover:bg-gray-50">
+                                        <td class="py-4 px-4">
+                                            <div class="flex items-center space-x-3">
+                                                <div class="w-8 h-8 bg-gray-200 rounded-full flex items-center justify-center">
+                                                    <span class="text-xs font-semibold text-gray-600" data-bind="patient.initials">JD</span>
+                                                </div>
+                                                <div>
+                                                    <p class="font-medium text-gray-900" data-bind="patient.name">John Doe</p>
+                                                    <p class="text-xs text-medical-gray" data-bind="patient.age">35 years, Male</p>
+                                                </div>
+                                            </div>
+                                        </td>
+                                        <td class="py-4 px-4 text-sm text-medical-gray" data-bind="patient.id">#PT001</td>
+                                        <td class="py-4 px-4 text-sm text-medical-gray" data-bind="patient.phone">+1 (555) 123-4567</td>
+                                        <td class="py-4 px-4 text-sm text-medical-gray" data-bind="patient.lastVisit">Oct 15, 2024</td>
+                                        <td class="py-4 px-4">
+                                            <span class="px-2 py-1 text-xs font-medium bg-green-100 text-medical-green rounded-full" data-bind="patient.status">Healthy</span>
+                                        </td>
+                                        <td class="py-4 px-4">
+                                            <div class="flex items-center justify-end space-x-2">
+                                                <button data-event="click:viewPatient" data-patient-id="patient.id"
+                                                        class="text-medical-blue hover:bg-blue-50 p-2 rounded-lg transition-colors">
+                                                    <i class="fas fa-eye"></i>
+                                                </button>
+                                                <button data-event="click:editPatient" data-patient-id="patient.id"
+                                                        class="text-medical-gray hover:bg-gray-50 p-2 rounded-lg transition-colors">
+                                                    <i class="fas fa-edit"></i>
+                                                </button>
+                                                <button data-event="click:viewPrescriptions" data-patient-id="patient.id"
+                                                        class="text-medical-green hover:bg-green-50 p-2 rounded-lg transition-colors">
+                                                    <i class="fas fa-prescription-bottle-alt"></i>
+                                                </button>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                    <!-- @END_MAP )) -->
+                                    
+                                    <tr class="hover:bg-gray-50">
+                                        <td class="py-4 px-4">
+                                            <div class="flex items-center space-x-3">
+                                                <div class="w-8 h-8 bg-gray-200 rounded-full flex items-center justify-center">
+                                                    <span class="text-xs font-semibold text-gray-600">MS</span>
+                                                </div>
+                                                <div>
+                                                    <p class="font-medium text-gray-900">Maria Santos</p>
+                                                    <p class="text-xs text-medical-gray">42 years, Female</p>
+                                                </div>
+                                            </div>
+                                        </td>
+                                        <td class="py-4 px-4 text-sm text-medical-gray">#PT002</td>
+                                        <td class="py-4 px-4 text-sm text-medical-gray">+1 (555) 987-6543</td>
+                                        <td class="py-4 px-4 text-sm text-medical-gray">Oct 14, 2024</td>
+                                        <td class="py-4 px-4">
+                                            <span class="px-2 py-1 text-xs font-medium bg-yellow-100 text-yellow-800 rounded-full">Follow-up</span>
+                                        </td>
+                                        <td class="py-4 px-4">
+                                            <div class="flex items-center justify-end space-x-2">
+                                                <button class="text-medical-blue hover:bg-blue-50 p-2 rounded-lg transition-colors">
+                                                    <i class="fas fa-eye"></i>
+                                                </button>
+                                                <button class="text-medical-gray hover:bg-gray-50 p-2 rounded-lg transition-colors">
+                                                    <i class="fas fa-edit"></i>
+                                                </button>
+                                                <button class="text-medical-green hover:bg-green-50 p-2 rounded-lg transition-colors">
+                                                    <i class="fas fa-prescription-bottle-alt"></i>
+                                                </button>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </main>
+            <!-- @END_COMPONENT: DashboardContent -->
+        </div>
+        <!-- @END_COMPONENT: MainContent -->
+    </div>
+    <!-- @END_COMPONENT: MainApplication -->
+
+    <!-- @COMPONENT: AddPatientModal -->
+    <div id="addPatientModal" class="hidden fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+        <div class="bg-white rounded-xl shadow-2xl w-full max-w-2xl mx-4 max-h-[90vh] overflow-y-auto">
+            <div class="p-6 border-b border-gray-200">
+                <div class="flex items-center justify-between">
+                    <h2 class="text-xl font-bold text-gray-900">Add New Patient</h2>
+                    <button data-event="click:closeAddPatientModal" class="text-medical-gray hover:text-gray-700">
+                        <i class="fas fa-times text-xl"></i>
+                    </button>
+                </div>
+            </div>
+            
+            <form class="p-6" data-implementation="Should validate and save patient data">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">First Name*</label>
+                        <input type="text" data-bind="newPatient.firstName" required
+                               class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-medical-blue focus:border-transparent">
+                    </div>
+                    
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Last Name*</label>
+                        <input type="text" data-bind="newPatient.lastName" required
+                               class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-medical-blue focus:border-transparent">
+                    </div>
+                    
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Date of Birth*</label>
+                        <input type="date" data-bind="newPatient.dateOfBirth" required
+                               class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-medical-blue focus:border-transparent">
+                    </div>
+                    
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Gender*</label>
+                        <select data-bind="newPatient.gender" required
+                                class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-medical-blue focus:border-transparent">
+                            <option value="">Select gender...</option>
+                            <option value="male">Male</option>
+                            <option value="female">Female</option>
+                            <option value="other">Other</option>
+                        </select>
+                    </div>
+                    
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Phone Number*</label>
+                        <input type="tel" data-bind="newPatient.phone" required
+                               class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-medical-blue focus:border-transparent">
+                    </div>
+                    
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Email</label>
+                        <input type="email" data-bind="newPatient.email"
+                               class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-medical-blue focus:border-transparent">
+                    </div>
+                    
+                    <div class="md:col-span-2">
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Address</label>
+                        <textarea data-bind="newPatient.address" rows="3"
+                                  class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-medical-blue focus:border-transparent"></textarea>
+                    </div>
+                    
+                    <div class="md:col-span-2">
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Medical History</label>
+                        <textarea data-bind="newPatient.medicalHistory" rows="4" placeholder="Previous conditions, allergies, medications..."
+                                  class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-medical-blue focus:border-transparent"></textarea>
+                    </div>
+                </div>
+                
+                <div class="flex items-center justify-end space-x-4 mt-8">
+                    <button type="button" data-event="click:closeAddPatientModal" 
+                            class="px-6 py-3 border border-gray-300 text-medical-gray rounded-lg hover:bg-gray-50 transition-colors">
+                        Cancel
+                    </button>
+                    <button type="submit" data-event="click:savePatient" 
+                            class="px-6 py-3 bg-medical-blue text-white rounded-lg hover:bg-blue-700 transition-colors">
+                        Add Patient
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+    <!-- @END_COMPONENT: AddPatientModal -->
+
+    <script>
+        (function() {
+            // TODO: Implement authentication logic, patient management, voice recording, and prescription generation
+            
+            // Show login modal initially
+            document.getElementById('loginModal').style.display = 'flex';
+            
+            // Simulate login
+            document.querySelector('[data-event="click:handleLogin"]').addEventListener('click', function(e) {
+                e.preventDefault();
+                document.getElementById('loginModal').style.display = 'none';
+                document.getElementById('mainApp').classList.remove('hidden');
+            });
+            
+            // Modal controls
+            document.querySelector('[data-event="click:openAddPatientModal"]')?.addEventListener('click', function() {
+                document.getElementById('addPatientModal').classList.remove('hidden');
+            });
+            
+            document.querySelector('[data-event="click:closeAddPatientModal"]')?.addEventListener('click', function() {
+                document.getElementById('addPatientModal').classList.add('hidden');
+            });
+            
+            // Voice recording simulation
+            let isRecording = false;
+            document.querySelector('[data-event="click:toggleRecording"]')?.addEventListener('click', function() {
+                isRecording = !isRecording;
+                const button = this;
+                const statusEl = document.querySelector('[data-bind="recordingStatus"]');
+                
+                if (isRecording) {
+                    button.innerHTML = '<i class="fas fa-stop text-3xl"></i>';
+                    button.classList.remove('bg-medical-red', 'hover:bg-red-700');
+                    button.classList.add('bg-gray-600', 'hover:bg-gray-700');
+                    statusEl.textContent = 'Recording... Click to stop';
+                    
+                    // TODO: Implement actual Web Speech API integration
+                    // Example: startSpeechRecognition()
+                } else {
+                    button.innerHTML = '<i class="fas fa-microphone text-3xl"></i>';
+                    button.classList.remove('bg-gray-600', 'hover:bg-gray-700');
+                    button.classList.add('bg-medical-red', 'hover:bg-red-700');
+                    statusEl.textContent = 'Processing transcription...';
+                    
+                    // TODO: Process recording and extract prescription data
+                    // Example: processSpeechToText()
+                }
+            });
+            
+            // TODO: Implement remaining functionality:
+            // - Patient search and filtering
+            // - Prescription history viewing
+            // - PDF generation for prescriptions
+            // - Real-time speech-to-text using Web Speech API
+            // - NLP processing for medicine/test extraction
+            // - Form validation and data persistence
+        })();
+    </script>
+</body>
+</html>
