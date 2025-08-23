@@ -122,7 +122,7 @@ export default function DashboardLayout({ children, doctor }: DashboardLayoutPro
         </nav>
 
         {/* Main Content */}
-        <main className="flex-1 p-6">
+        <main className="flex-1 p-6 bg-blue-200">
           {children}
         </main>
       </div>
