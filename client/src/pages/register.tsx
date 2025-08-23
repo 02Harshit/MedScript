@@ -185,15 +185,24 @@ export default function Register() {
               )}
             />
 
-            <div className="md:col-span-2 flex space-x-4">
+            <div className="md:col-span-2 flex flex-col md:flex-row space-y-3 md:space-y-0 md:space-x-4">
+              <Button
+                type="button"
+                variant="outline"
+                className="flex-1"
+                onClick={() => setLocation("/login")}
+                data-testid="button-back-login"
+              >
+                Back to Login
+              </Button>
               <Button
                 type="button"
                 variant="outline"
                 className="flex-1"
                 onClick={() => setLocation("/")}
-                data-testid="button-back"
+                data-testid="button-back-home"
               >
-                Back to Login
+                Back to Home
               </Button>
               <Button
                 type="submit"

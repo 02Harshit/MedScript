@@ -11,6 +11,7 @@ import PrescriptionCreation from "@/pages/prescription-creation";
 import History from "@/pages/history";
 import NotFound from "@/pages/not-found";
 import DashboardLayout from "@/components/dashboard-layout";
+import LandingPage from "./pages/landing-page";
 import { useQuery } from "@tanstack/react-query";
 
 function AuthenticatedRoutes() {
@@ -29,8 +30,10 @@ function AuthenticatedRoutes() {
   if (!currentDoctor) {
     return (
       <Switch>
+        <Route path="/" component={LandingPage} />
         <Route path="/register" component={Register} />
-        <Route component={Login} />
+        <Route path="/login" component={Login} />
+        <Route component={NotFound} />
       </Switch>
     );
   }

@@ -141,11 +141,19 @@ export default function Login() {
               {loginMutation.isPending ? "Signing In..." : "Sign In"}
             </Button>
 
-            <div className="text-center">
-              <span className="text-sm text-gray-600">Don't have an account? </span>
-              <Link href="/register" className="text-sm text-medical-blue hover:text-blue-700 font-medium">
-                Register here
-              </Link>
+            <div className="text-center space-y-2">
+              <div>
+                <span className="text-sm text-gray-600">Don't have an account? </span>
+                <Link href="/register" className="text-sm text-medical-blue hover:text-blue-700 font-medium">
+                  Register here
+                </Link>
+              </div>
+
+              <div>
+                <Link href="/" className="text-sm text-gray-500 hover:text-gray-700">
+                  ← Back to Home
+                </Link>
+              </div>
             </div>
           </form>
         </Form>
