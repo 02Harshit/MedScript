@@ -14,6 +14,8 @@ import DashboardLayout from "@/components/dashboard-layout";
 import LandingPage from "./pages/landing-page";
 import { useQuery } from "@tanstack/react-query";
 import AnalyticsPage from "./pages/AnalyticsPage";
+import Settings from "@/pages/settings";
+
 
 
 
@@ -50,6 +52,8 @@ function AuthenticatedRoutes() {
         <Route path="/prescriptions/new" component={PrescriptionCreation} />
         <Route path="/history" component={History} />
         <Route path="/analytics" component={AnalyticsPage} />  
+        <Route path="/settings" component={Settings} />
+
         <Route component={NotFound} />
       </Switch>
     </DashboardLayout>
