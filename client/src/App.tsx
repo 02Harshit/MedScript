@@ -13,6 +13,10 @@ import NotFound from "@/pages/not-found";
 import DashboardLayout from "@/components/dashboard-layout";
 import LandingPage from "./pages/landing-page";
 import { useQuery } from "@tanstack/react-query";
+import AnalyticsPage from "./pages/AnalyticsPage";
+
+
+
 
 function AuthenticatedRoutes() {
   const { data: currentDoctor, isLoading } = useQuery({
@@ -45,6 +49,7 @@ function AuthenticatedRoutes() {
         <Route path="/patients" component={PatientManagement} />
         <Route path="/prescriptions/new" component={PrescriptionCreation} />
         <Route path="/history" component={History} />
+        <Route path="/analytics" component={AnalyticsPage} />  
         <Route component={NotFound} />
       </Switch>
     </DashboardLayout>

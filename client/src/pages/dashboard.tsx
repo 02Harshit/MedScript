@@ -184,6 +184,8 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Link } from "wouter";
 
+
+
 // Lucide icons
 import { Users, FileText, UserPlus, Search, BarChart2 } from "lucide-react";
 
@@ -212,6 +214,8 @@ export default function Dashboard() {
         <h2 className="text-2xl font-extrabold text-gray-900 mb-2">Hello, Doctor</h2>
         <p className="text-gray-600">Here's your practice overview for today</p>
       </div>
+  
+
 
       {/* Stats Cards */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
