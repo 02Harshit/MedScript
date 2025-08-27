@@ -795,7 +795,7 @@ export default function Register() {
                         {...field}
                         type={showConfirmPassword ? "text" : "password"}
                         placeholder="Confirm Password"
-                        className="bg-white/90 border-2 border-gray-200 focus:border-medical-blue focus:ring-medical-blue text-gray-900 placeholder-gray-400 rounded-xl py-3 pl-4 pr-10 transition"
+                        className="bg-white/90 border-2 border-gray-200 focus:border-medical-blue focus:ring-medical-blue text-gray-900 placeholder-gray-400 rounded-xl py-3 pl-4 pr-10xxxxxxx transition"
                         data-testid="input-confirmPassword"
                       />
                       <button
