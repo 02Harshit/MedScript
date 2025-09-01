@@ -21,15 +21,37 @@ export default function History() {
   }
 
   const handleDownloadPDF = (prescription: any) => {
-    generatePrescriptionPDF({
-      doctor: prescription.doctor,
-      patient: prescription.patient,
-      medicines: typeof prescription.medicines === 'string' 
-        ? JSON.parse(prescription.medicines) 
+    // generatePrescriptionPDF({
+    //   doctor: prescription.doctor,
+    //   patient: prescription.patient,
+    //   medicines: typeof prescription.medicines === 'string' 
+    //     ? JSON.parse(prescription.medicines) 
+    //     : prescription.medicines,
+    //   additionalNotes: prescription.additionalNotes || "",
+    //   date: new Date(prescription.createdAt).toLocaleDateString(),
+    // });
+    const mappedData = {
+      doctor: {
+        firstName: prescription.doctor?.firstName || prescription.doctor?.first_name || "unknown",
+        lastName: prescription.doctor?.lastName || prescription.doctor?.last_name || "unknown",
+        specialization: prescription.doctor?.specialization || prescription.doctor?.title || "MD",
+        medicalLicenseId: prescription.doctor?.medicalLicenseId || prescription.doctor?.license || "unknown",
+      },
+      patient: {
+        firstName: prescription.patient?.firstName || prescription.patient?.first_name || "unknown",
+        lastName: prescription.patient?.lastName || prescription.patient?.last_name || "unknown",
+        phone: prescription.patient?.phone || prescription.patient?.phone_number || "unknown",
+        dateOfBirth: prescription.patient?.dateOfBirth || prescription.patient?.dob || "",
+      },
+      medicines: typeof prescription.medicines === "string"
+        ? JSON.parse(prescription.medicines)
         : prescription.medicines,
       additionalNotes: prescription.additionalNotes || "",
       date: new Date(prescription.createdAt).toLocaleDateString(),
-    });
+    };
+    console.log("Mapped Data for PDF:", mappedData);
+
+    generatePrescriptionPDF(mappedData);
   };
 
   return (

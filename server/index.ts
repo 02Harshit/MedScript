@@ -3,11 +3,16 @@ import express, { type Request, Response, NextFunction } from "express";
 import session from "express-session";
 import { registerRoutes } from "./routes";
 import { setupVite, serveStatic, log } from "./vite";
+import cors from "cors";
 
 
 const app = express();
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
+app.use(cors({
+  origin: "http://localhost:5173", // frontend URL
+  credentials: true,
+}));
 
 // Session configuration
 app.use(session({
@@ -17,9 +22,14 @@ app.use(session({
   cookie: {
     secure: false, // Set to true in production with HTTPS
     httpOnly: true,
-    maxAge: 24 * 60 * 60 * 1000 // 24 hours
-  }
+    maxAge: 1000 * 60 * 60, // 24 hours
+  },
 }));
+app.use((req, _res, next) => {
+  console.log("🔎 Cookies:", req.headers.cookie);
+  console.log("🔎 Session:", req.session);
+  next();
+});
 
 app.use((req, res, next) => {
   const start = Date.now();

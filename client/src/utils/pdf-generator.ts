@@ -48,7 +48,7 @@ export const generatePrescriptionPDF = (data: PrescriptionData) => {
     <head>
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>Medical Prescription - Dr. ${data.doctor.firstName} ${data.doctor.lastName}</title>
+        <title>Medical Prescription - Dr. ${data.doctor?.firstName || "unknown"} ${data.doctor?.lastName || "unknown"}</title>
         <style>
             body {
                 font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
@@ -220,9 +220,9 @@ export const generatePrescriptionPDF = (data: PrescriptionData) => {
     <body>
         <div class="header">
             <div class="doctor-info">
-                <h1 class="doctor-name">Dr. ${data.doctor.firstName} ${data.doctor.lastName}</h1>
-                <p class="doctor-specialty">${data.doctor.specialization || 'MD'}</p>
-                <p class="license-info">Medical License: ${data.doctor.medicalLicenseId}</p>
+                <h1 class="doctor-name">Dr. ${data.doctor?.firstName || "unknown"} ${data.doctor?.lastName || "unknown"}</h1>
+                <p class="doctor-specialty">${data.doctor?.specialization || 'MD'}</p>
+                <p class="license-info">Medical License: ${data.doctor?.medicalLicenseId || "unknown"}</p>
             </div>
         </div>
 
@@ -231,19 +231,19 @@ export const generatePrescriptionPDF = (data: PrescriptionData) => {
             <div class="patient-info">
                 <div class="info-group">
                     <div class="info-label">Patient Name:</div>
-                    <div class="info-value">${data.patient.firstName} ${data.patient.lastName}</div>
+                    <div class="info-value">${data.patient?.firstName || "unknown"} ${data.patient?.lastName || "unknown"}</div>
                 </div>
                 <div class="info-group">
                     <div class="info-label">Age:</div>
-                    <div class="info-value">${calculateAge(data.patient.dateOfBirth)} years</div>
+                    <div class="info-value">${calculateAge(data.patient?.dateOfBirth)|| "unknown"} years</div>
                 </div>
                 <div class="info-group">
                     <div class="info-label">Phone:</div>
-                    <div class="info-value">${data.patient.phone}</div>
+                    <div class="info-value">${data.patient?.phone || "unknown"}</div>
                 </div>
                 <div class="info-group">
                     <div class="info-label">Date:</div>
-                    <div class="info-value">${data.date}</div>
+                    <div class="info-value">${data?.date || "unknown"}</div>
                 </div>
             </div>
         </div>
@@ -252,18 +252,18 @@ export const generatePrescriptionPDF = (data: PrescriptionData) => {
             <h2 class="section-title">℞ Prescription</h2>
             ${data.medicines.map((medicine, index) => `
                 <div class="medicine-item">
-                    <div class="medicine-name">${index + 1}. ${medicine.name} ${medicine.dosage}</div>
+                    <div class="medicine-name">${index + 1}. ${medicine.name || "unknown"} ${medicine.dosage || "unknown"}</div>
                     <div class="medicine-details">
                         <div class="medicine-detail">
                             <span class="detail-label">Frequency:</span>
-                            <span class="detail-value">${medicine.frequency}</span>
+                            <span class="detail-value">${medicine.frequency || "unknown"}</span>
                         </div>
                         <div class="medicine-detail">
                             <span class="detail-label">Duration:</span>
-                            <span class="detail-value">${medicine.duration}</span>
+                            <span class="detail-value">${medicine.duration || "unknown"}</span>
                         </div>
                     </div>
-                    ${medicine.instructions ? `<div class="medicine-instructions">Instructions: ${medicine.instructions}</div>` : ''}
+                    ${medicine.instructions ? `<div class="medicine-instructions">Instructions: ${medicine.instructions || "unknown"}</div>` : ''}
                 </div>
             `).join('')}
         </div>
@@ -271,18 +271,18 @@ export const generatePrescriptionPDF = (data: PrescriptionData) => {
         ${data.additionalNotes ? `
             <div class="notes-section">
                 <h3 class="section-title" style="margin-bottom: 10px; font-size: 16px;">Additional Notes:</h3>
-                <p style="margin: 0;">${data.additionalNotes}</p>
+                <p style="margin: 0;">${data.additionalNotes || "unknown"}</p>
             </div>
         ` : ''}
 
         <div class="footer">
             <div class="date-issued">
-                Date Issued: ${data.date}
+                Date Issued: ${data.date || "unknown"}
             </div>
             <div class="signature-section">
                 <div class="signature-line"></div>
                 <div style="font-size: 14px; color: #6b7280;">
-                    Dr. ${data.doctor.firstName} ${data.doctor.lastName}
+                    Dr. ${data.doctor?.firstName || "unknown"} ${data.doctor?.lastName || "unknown"}
                 </div>
             </div>
         </div>

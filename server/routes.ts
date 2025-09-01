@@ -77,6 +77,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
       if (req.session) {
         req.session.doctorId = doctor.id;
+        console.log("Doctor session created:", req.session);
       }
       
       res.json({ 
@@ -206,6 +207,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // Prescription routes
   app.get("/api/prescriptions", requireAuth, async (req, res) => {
     try {
+      console.log("Fetching prescriptions for doctorId:", req.session.doctorId);
       const prescriptions = await storage.getPrescriptionsByDoctor(req.session.doctorId);
       res.json(prescriptions);
     } catch (error) {
@@ -248,7 +250,34 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.get("/api/prescriptions", requireAuth, async (req, res) => {
     try {
       const prescriptions = await storage.getPrescriptionsByDoctor(req.session.doctorId);
-      res.json(prescriptions);
+      const doctor = await storage.getDoctor(req.session.doctorId);
+
+      const enriched = await Promise.all(
+        prescriptions.map(async (p) => {
+          const patient = await storage.getPatient(p.patientId);
+          return {
+            ...p,
+            doctor: {
+              id: doctor.id,
+              firstName: doctor.firstName,
+              lastName: doctor.lastName,
+              specialization: doctor.specialization ?? "MD",
+              medicalLicenseId: doctor.medicalLicenseId, // make sure this field exists in schema
+            },
+            patient: patient
+              ? {
+                  id: patient.id,
+                  firstName: patient.firstName,
+                  lastName: patient.lastName,
+                  phone: patient.phone,
+                  dateOfBirth: patient.dateOfBirth,
+                }
+              : null,
+          };
+        })
+      );
+
+      res.json(enriched);
     } catch (error) {
       console.error("Error fetching prescriptions:", error);
       res.status(500).json({ message: "Internal server error" });
