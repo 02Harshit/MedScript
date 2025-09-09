@@ -30,18 +30,19 @@ export default function History() {
     //   additionalNotes: prescription.additionalNotes || "",
     //   date: new Date(prescription.createdAt).toLocaleDateString(),
     // });
+    console.log("Generating PDF for prescription:", prescription);
     const mappedData = {
       doctor: {
-        firstName: prescription.doctor?.firstName || prescription.doctor?.first_name || "unknown",
-        lastName: prescription.doctor?.lastName || prescription.doctor?.last_name || "unknown",
-        specialization: prescription.doctor?.specialization || prescription.doctor?.title || "MD",
-        medicalLicenseId: prescription.doctor?.medicalLicenseId || prescription.doctor?.license || "unknown",
+        firstName: prescription.doctor?.firstName || "unknown",
+        lastName: prescription.doctor?.lastName || "unknown",
+        specialization: prescription.doctor?.specialization || "MD",
+        medicalLicenseId: prescription.doctor?.medicalLicenseId || "unknown",
       },
       patient: {
-        firstName: prescription.patient?.firstName || prescription.patient?.first_name || "unknown",
-        lastName: prescription.patient?.lastName || prescription.patient?.last_name || "unknown",
-        phone: prescription.patient?.phone || prescription.patient?.phone_number || "unknown",
-        dateOfBirth: prescription.patient?.dateOfBirth || prescription.patient?.dob || "",
+        firstName: prescription.patient?.firstName || "unknown",
+        lastName: prescription.patient?.lastName || "unknown",
+        phone: prescription.patient?.phone || "unknown",
+        dateOfBirth: prescription.patient?.dateOfBirth || "",
       },
       medicines: typeof prescription.medicines === "string"
         ? JSON.parse(prescription.medicines)

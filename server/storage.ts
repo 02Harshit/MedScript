@@ -108,12 +108,78 @@ export class DatabaseStorage implements IStorage {
     return prescription || undefined;
   }
 
-  async getPrescriptionsByPatient(patientId: string): Promise<Prescription[]> {
-    return await db.select().from(prescriptions).where(eq(prescriptions.patientId, patientId)).orderBy(desc(prescriptions.createdAt));
+  // async getPrescriptionsByPatient(patientId: string): Promise<Prescription[]> {
+  //   return await db.select().from(prescriptions).where(eq(prescriptions.patientId, patientId)).orderBy(desc(prescriptions.createdAt));
+  // }
+
+  async getPrescriptionsByPatient(patientId: string) {
+    const rows = await db
+      .select({
+        prescription: prescriptions,
+        doctor: {
+          id: doctors.id,
+          firstName: doctors.firstName,
+          lastName: doctors.lastName,
+          specialization: doctors.specialization,
+          medicalLicenseId: doctors.medicalLicenseId,
+        },
+        patient: {
+          id: patients.id,
+          firstName: patients.firstName,
+          lastName: patients.lastName,
+          phone: patients.phone,
+          dateOfBirth: patients.dateOfBirth,
+        },
+      })
+      .from(prescriptions)
+      .leftJoin(doctors, eq(prescriptions.doctorId, doctors.id))
+      .leftJoin(patients, eq(prescriptions.patientId, patients.id))
+      .where(eq(prescriptions.patientId, patientId))
+      .orderBy(desc(prescriptions.createdAt));
+
+    return rows.map((row) => ({
+      ...row.prescription,
+      doctor: row.doctor,
+      patient: row.patient,
+    }));
   }
 
-  async getPrescriptionsByDoctor(doctorId: string): Promise<Prescription[]> {
-    return await db.select().from(prescriptions).where(eq(prescriptions.doctorId, doctorId)).orderBy(desc(prescriptions.createdAt));
+
+  // async getPrescriptionsByDoctor(doctorId: string): Promise<Prescription[]> {
+  //   return await db.select().from(prescriptions).where(eq(prescriptions.doctorId, doctorId)).orderBy(desc(prescriptions.createdAt));
+  // }
+
+  async getPrescriptionsByDoctor(doctorId: string) {
+    const rows = await db
+      .select({
+        prescription: prescriptions,
+        doctor: {
+          id: doctors.id,
+          firstName: doctors.firstName,
+          lastName: doctors.lastName,
+          specialization: doctors.specialization,
+          medicalLicenseId: doctors.medicalLicenseId,
+        },
+        patient: {
+          id: patients.id,
+          firstName: patients.firstName,
+          lastName: patients.lastName,
+          phone: patients.phone,
+          dateOfBirth: patients.dateOfBirth,
+        },
+      })
+      .from(prescriptions)
+      .leftJoin(doctors, eq(prescriptions.doctorId, doctors.id))
+      .leftJoin(patients, eq(prescriptions.patientId, patients.id))
+      .where(eq(prescriptions.doctorId, doctorId))
+      .orderBy(desc(prescriptions.createdAt));
+
+    // Normalize the shape: merge into single object
+    return rows.map((row) => ({
+      ...row.prescription,
+      doctor: row.doctor,
+      patient: row.patient,
+    }));
   }
 
   async createPrescription(insertPrescription: InsertPrescription): Promise<Prescription> {

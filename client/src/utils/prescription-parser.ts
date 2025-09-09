@@ -57,15 +57,66 @@ export const parsePrescriptionText = (text: string): ParsedMedicine[] => {
     let instructions = '';
 
     // Extract medicine name
+    // for (const pattern of medicinePatterns) {
+    //   const matches = pattern.exec(trimmedSentence);
+    //   if (matches) {
+    //     medicineName = matches[1] || matches[3] || matches[0];
+    //     if (matches[2]) dosage = matches[2].trim();
+    //     pattern.lastIndex = 0; // Reset regex
+    //     break;
+    //   }
+    // }
+
+    // Updated extraction logic to capture more medicine names but giving same dosage and freq for both
+    // for (const pattern of medicinePatterns) {
+    //   let match;
+    //   while ((match = pattern.exec(trimmedSentence)) !== null) {
+    //     const medicineName = match[1] || match[3] || match[0];
+    //     const dosage = match[2] || "As prescribed";
+
+    //     // ✅ Try to extract from sentence first
+    //     const frequencyMatch = /once daily|twice daily|three times daily|every \d+ hours/i.exec(trimmedSentence);
+    //     const durationMatch = /for\s+(\d+)\s+(day|days|week|weeks)/i.exec(trimmedSentence);
+    //     const instructionsMatch = /(after meals|before meals|with water|with milk|before bedtime)/i.exec(trimmedSentence);
+
+    //     medicines.push({
+    //       name: medicineName.charAt(0).toUpperCase() + medicineName.slice(1),
+    //       dosage,
+    //       frequency: frequencyMatch ? frequencyMatch[0] : "As directed",   // fallback only if not found
+    //       duration: durationMatch ? durationMatch[0] : "As needed",        // fallback only if not found
+    //       instructions: instructionsMatch ? instructionsMatch[0] : "",
+    //     });
+    //   }
+    //   pattern.lastIndex = 0; // reset regex pointer for reuse
+    //   if (medicines.length > 0) break; // ✅ prevents duplicate pushes
+    // }
+
+    // Updated extraction logic to capture more medicine names with different dosage and freq for each
     for (const pattern of medicinePatterns) {
-      const matches = pattern.exec(trimmedSentence);
-      if (matches) {
-        medicineName = matches[1] || matches[3] || matches[0];
-        if (matches[2]) dosage = matches[2].trim();
-        pattern.lastIndex = 0; // Reset regex
-        break;
+      let match;
+      while ((match = pattern.exec(trimmedSentence)) !== null) {
+        const medicineName = match[1] || match[3] || match[0];
+        const dosage = match[2] || "As prescribed";
+
+        // Get the substring after this medicine mention
+        const afterMedicineText = trimmedSentence.slice(match.index + match[0].length);
+
+        const frequencyMatch = /once daily|twice daily|three times daily|every \d+ hours/i.exec(afterMedicineText);
+        const durationMatch = /for\s+\d+\s+(day|days|week|weeks)/i.exec(afterMedicineText);
+        const instructionsMatch = /(after meals|before meals|with water|with milk|before bedtime)/i.exec(afterMedicineText);
+
+        medicines.push({
+          name: capitalizeFirst(medicineName),
+          dosage,
+          frequency: frequencyMatch ? frequencyMatch[0] : "As directed",
+          duration: durationMatch ? durationMatch[0] : "As needed",
+          instructions: instructionsMatch ? instructionsMatch[0] : "",
+        });
       }
-    }
+      pattern.lastIndex = 0;
+      if (medicines.length > 0) break; // ✅ prevents duplicate pushes
+  }
+
 
     // If no medicine found with patterns, try to identify common words
     if (!medicineName) {

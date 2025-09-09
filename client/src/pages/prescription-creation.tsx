@@ -50,8 +50,6 @@ export default function PrescriptionCreation() {
       patientId: "",
       medicines: [
         { name: "", dosage: "", frequency: "", duration: "", instructions: "" },
-        { name: "", dosage: "", frequency: "", duration: "", instructions: "" },
-        { name: "", dosage: "", frequency: "", duration: "", instructions: "" }
       ],
       additionalNotes: "",
       transcribedText: "",
