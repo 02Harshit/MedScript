@@ -5,6 +5,7 @@
 -   [ ] Prescription recognition (edit text, edit prescription, save prescription)
 -   [ ] Analytics data
 -   [ ] settings (profile details update)
+-   [ ] Edit patient details
 
 ## Features
 
