@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -10,14 +10,24 @@ import AddPatientModal from "@/components/add-patient-modal";
 import { Link } from "wouter";
 
 export default function PatientManagement() {
+  const [searchInput, setSearchInput] = useState("");
+  const [debouncedSearch, setDebouncedSearch] = useState("");
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedPatient, setSelectedPatient] = useState<any>(null);
   const [showAddModal, setShowAddModal] = useState(false);
 
+  useEffect( () => {
+    const timer = setTimeout( () => {
+      setDebouncedSearch(searchInput.trim());
+    }, 400);
+    
+    return () => clearTimeout(timer);
+  }, [searchInput]);
+
   const { data: patients, isLoading } = useQuery({
-    queryKey: ["/api/patients", searchQuery],
+    queryKey: ["/api/patients", debouncedSearch],
     queryFn: async () => {
-      const url = searchQuery ? `/api/patients?search=${encodeURIComponent(searchQuery)}` : "/api/patients";
+      const url = debouncedSearch ? `/api/patients?search=${encodeURIComponent(debouncedSearch)}` : "/api/patients";
       const response = await fetch(url, { credentials: "include" });
       if (!response.ok) throw new Error("Failed to fetch patients");
       return response.json();
@@ -68,8 +78,8 @@ export default function PatientManagement() {
               <label className="block text-sm font-medium text-gray-700 mb-2">Search Patients</label>
               <div className="relative">
                 <Input
-                  value={searchQuery}
-                  onChange={(e) => setSearchQuery(e.target.value)}
+                  value={searchInput}
+                  onChange={(e) => setSearchInput(e.target.value)}
                   placeholder="Search by name, ID, or phone..."
                   className="pl-10"
                   data-testid="input-search"

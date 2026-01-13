@@ -160,22 +160,26 @@ export default function Dashboard() {
                   <span className="text-base font-semibold text-green-900">New Prescription</span>
                 </Button>
               </Link>
-              <Button
-                variant="outline"
-                className="w-full flex flex-col items-center p-5 h-auto border-2 border-dashed border-amber-100 hover:border-amber-500 hover:bg-amber-50 shadow transition"
-                data-testid="action-search-records"
-              >
-                <Search className="w-7 h-7 text-amber-500 mb-2" />
-                <span className="text-base font-semibold text-amber-900">Search Records</span>
-              </Button>
-              <Button
-                variant="outline"
-                className="w-full flex flex-col items-center p-5 h-auto border-2 border-dashed border-purple-100 hover:border-purple-600 hover:bg-purple-50 shadow transition"
-                data-testid="action-view-reports"
-              >
-                <BarChart2 className="w-7 h-7 text-purple-600 mb-2" />
-                <span className="text-base font-semibold text-purple-900">View Reports</span>
-              </Button>
+              <Link href="/patients">
+                <Button
+                  variant="outline"
+                  className="w-full flex flex-col items-center p-5 h-auto border-2 border-dashed border-amber-100 hover:border-amber-500 hover:bg-amber-50 shadow transition"
+                  data-testid="action-search-records"
+                >
+                  <Search className="w-7 h-7 text-amber-500 mb-2" />
+                  <span className="text-base font-semibold text-amber-900">Search Records</span>
+                </Button>
+              </Link>
+              <Link href="/analytics">
+                <Button
+                  variant="outline"
+                  className="w-full flex flex-col items-center p-5 h-auto border-2 border-dashed border-purple-100 hover:border-purple-600 hover:bg-purple-50 shadow transition"
+                  data-testid="action-view-reports"
+                >
+                  <BarChart2 className="w-7 h-7 text-purple-600 mb-2" />
+                  <span className="text-base font-semibold text-purple-900">View Analytics</span>
+                </Button>
+              </Link>
             </div>
           </CardContent>
         </Card>

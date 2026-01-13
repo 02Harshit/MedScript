@@ -199,9 +199,9 @@ export default function DashboardLayout({ children, doctor }: DashboardLayoutPro
             </div>
           </div>
           <div className="flex items-center space-x-6">
-            <Button variant="ghost" size="sm" className="p-2 text-gray-400 hover:text-blue-600">
+            {/* <Button variant="ghost" size="sm" className="p-2 text-gray-400 hover:text-blue-600">
               <i className="fas fa-bell text-lg"></i>
-            </Button>
+            </Button> */}
             <div className="flex items-center p-2 rounded-lg bg-blue-100">
               <div className="w-8 h-8 bg-gradient-to-br from-blue-600 to-blue-400 rounded-full flex items-center justify-center">
                 <span className="text-white text-sm font-semibold">
