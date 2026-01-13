@@ -4,6 +4,11 @@ import { storage } from "./storage";
 import bcrypt from "bcryptjs";
 import { insertDoctorSchema, insertPatientSchema, insertPrescriptionSchema } from "@shared/schema";
 import { z } from "zod";
+import { transporter } from "./utils/mailer";
+import { generatePrescriptionPDF } from "./utils/prescriptionPdf";
+import { generatePrescriptionHTML } from "./utils/prescriptionTemplate";
+import { htmlToPDF } from "./utils/pdf";
+import { renderPrescriptionHTML } from "@shared/prescription/renderPrescriptionHTML";
 
 
 
@@ -254,6 +259,75 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Email sending route
+  app.post("/api/prescriptions/:id/email", requireAuth, async (req, res) => {
+    try {
+      const prescriptionId = req.params.id;
+      const { email } = req.body;
+      const doctorId = req.session.doctorId;
+
+      const prescriptions = await storage.getPrescriptionsByDoctor(doctorId!);
+      const prescription = prescriptions.find(p => p.id === prescriptionId);
+      
+      if (!prescription) {
+        return res.status(404).json({ message: "Prescription not found" });
+      }
+
+      const patient = await storage.getPatient(prescription.patientId);
+      if(!patient) {
+        return res.status(404).json({ message: "Patient not found" });
+      }
+
+      const doctorRecord = await storage.getDoctor(doctorId!);
+      if(!doctorRecord) {
+        return res.status(404).json({ message: "Doctor not found" });
+      }
+
+      const targetEmail = email || patient.email;
+      if (!targetEmail) {
+        return res.status(400).json({ message: "No email address provided for patient" });
+      }
+
+      const doctorForTemplate = {
+        firstName: doctorRecord.firstName,
+        lastName: doctorRecord.lastName,
+        medicalLicenseId: doctorRecord.medicalLicenseId,
+        specialization: doctorRecord.specialization ?? undefined,
+      };
+
+      const html = renderPrescriptionHTML({
+        doctor: doctorForTemplate,
+        patient,
+        medicines: prescription.medicines,
+        additionalNotes: prescription.additionalNotes ?? "",
+        date: new Date().toLocaleDateString(),
+      });
+
+      const pdfBuffer = await htmlToPDF(html);
+
+      await transporter.sendMail({
+        to: targetEmail,
+        from: `"MedScript" <${process.env.MAIL_USER}>`,
+        subject: "Your Medical Prescription",
+        text: "Please find attached your medical prescription.",
+        attachments: [
+          {
+            filename: `prescription-${patient.firstName}.pdf`,
+            content: pdfBuffer,
+          },
+        ],
+      });
+
+      return res.json({
+        message: "Prescription email sent successfully",
+        sentTo: targetEmail,
+      });
+
+    } catch (err) {
+      console.error("Email prescription error:",err);
+      res.status(500).json({ message: "Internal server error" });
+    }
+  });
   // Dashboard stats
   app.get("/api/dashboard/stats", requireAuth, async (req, res) => {
     try {
