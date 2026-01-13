@@ -5,11 +5,7 @@ import bcrypt from "bcryptjs";
 import { insertDoctorSchema, insertPatientSchema, insertPrescriptionSchema } from "@shared/schema";
 import { z } from "zod";
 
-declare module "express-session" {
-  interface SessionData {
-    doctorId: string;
-  }
-}
+
 
 export async function registerRoutes(app: Express): Promise<Server> {
   // Doctor registration
@@ -148,9 +144,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
       let patients;
       
       if (search && typeof search === 'string') {
-        patients = await storage.searchPatients(req.session.doctorId, search);
+        patients = await storage.searchPatients(req.session.doctorId!, search);
       } else {
-        patients = await storage.getPatientsByDoctor(req.session.doctorId);
+        patients = await storage.getPatientsByDoctor(req.session.doctorId!);
       }
       
       res.json(patients);
@@ -249,7 +245,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // Get prescriptions for current doctor (for history page)
   app.get("/api/prescriptions", requireAuth, async (req, res) => {
     try {
-      const prescriptions = await storage.getPrescriptionsByDoctor(req.session.doctorId);
+      const prescriptions = await storage.getPrescriptionsByDoctor(req.session.doctorId!);
       res.json(prescriptions);
 
     } catch (error) {
@@ -261,8 +257,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // Dashboard stats
   app.get("/api/dashboard/stats", requireAuth, async (req, res) => {
     try {
-      const patients = await storage.getPatientsByDoctor(req.session.doctorId);
-      const prescriptions = await storage.getPrescriptionsByDoctor(req.session.doctorId);
+      const patients = await storage.getPatientsByDoctor(req.session.doctorId!);
+      const prescriptions = await storage.getPrescriptionsByDoctor(req.session.doctorId!);
       
       const today = new Date().toISOString().split('T')[0];
       const todayPrescriptions = prescriptions.filter(p => 

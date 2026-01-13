@@ -1,6 +1,6 @@
 import { doctors, patients, prescriptions, type Doctor, type InsertDoctor, type Patient, type InsertPatient, type Prescription, type InsertPrescription } from "@shared/schema";
 import { db } from "./db";
-import { eq, or, ilike, desc } from "drizzle-orm";
+import { eq, or, ilike, desc, and } from "drizzle-orm";
 
 export interface IStorage {
   // Doctor methods
@@ -93,11 +93,14 @@ export class DatabaseStorage implements IStorage {
 
   async searchPatients(doctorId: string, query: string): Promise<Patient[]> {
     return await db.select().from(patients).where(
-      or(
-        ilike(patients.firstName, `%${query}%`),
-        ilike(patients.lastName, `%${query}%`),
-        ilike(patients.phone, `%${query}%`),
-        ilike(patients.email, `%${query}%`)
+      and(
+        eq(patients.doctorId, doctorId),
+        or(
+          ilike(patients.firstName, `%${query}%`),
+          ilike(patients.lastName, `%${query}%`),
+          ilike(patients.phone, `%${query}%`),
+          ilike(patients.email, `%${query}%`)
+        )
       )
     ).orderBy(desc(patients.createdAt));
   }

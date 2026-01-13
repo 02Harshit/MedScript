@@ -5,8 +5,13 @@ import { registerRoutes } from "./routes";
 import { setupVite, serveStatic, log } from "./vite";
 import cors from "cors";
 
-
 const app = express();
+console.log("Express booting..."); //for debugging proxy issue
+app.use((req, res, next) => {
+  console.log("➡️ Incoming:", req.method, req.url);
+  next();
+});
+
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cors({
@@ -76,10 +81,16 @@ app.use((req, res, next) => {
   // setting up all the other routes so the catch-all route
   // doesn't interfere with the other routes
   if (app.get("env") === "development") {
-    await setupVite(app, server);
+    if (!process.env.USE_EXTERNAL_VITE) {
+      // Replit / single-server dev
+      await setupVite(app, server);
+    }
+    // else: local dev with external Vite → API only
   } else {
+    // Production
     serveStatic(app);
   }
+
 
   // ALWAYS serve the app on the port specified in the environment variable PORT
   // Other ports are firewalled. Default to 5000 if not specified.
