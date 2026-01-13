@@ -14,6 +14,8 @@ import { useToast } from "@/hooks/use-toast";
 import { apiRequest } from "@/lib/queryClient";
 import { generatePrescriptionPDF } from "@/utils/pdf-generator";
 
+
+
 const medicineSchema = z.object({
   name: z.string().min(1, "Medicine name is required"),
   dosage: z.string().min(1, "Dosage is required"),
@@ -32,6 +34,8 @@ const prescriptionSchema = z.object({
 type PrescriptionForm = z.infer<typeof prescriptionSchema>;
 
 export default function PrescriptionCreation() {
+  type PrescriptionStage = | "idle" | "recording" | "transcribed" | "processed" | "saved";
+  const [stage, setStage] = useState<PrescriptionStage>("idle");
   const [transcribedText, setTranscribedText] = useState("");
   const { toast } = useToast();
   const queryClient = useQueryClient();
@@ -45,7 +49,7 @@ export default function PrescriptionCreation() {
   });
 
   const form = useForm<PrescriptionForm>({
-    resolver: zodResolver(prescriptionSchema),
+    resolver: stage === "processed" ? zodResolver(prescriptionSchema) : undefined,
     defaultValues: {
       patientId: "",
       medicines: [
@@ -71,8 +75,10 @@ export default function PrescriptionCreation() {
         title: "Prescription saved",
         description: "Prescription has been saved successfully",
       });
+
+      setStage("saved");
       queryClient.invalidateQueries({ queryKey: ["/api/prescriptions"] });
-      form.reset();
+      // form.reset();
     },
     onError: (error: any) => {
       toast({
@@ -112,11 +118,16 @@ export default function PrescriptionCreation() {
 
   const handleTranscriptionProcessed = (text: string, medicines: any[]) => {
     setTranscribedText(text);
+    setStage("processed");
+
     if (medicines.length > 0) {
-      form.setValue("medicines", medicines);
+      form.setValue("medicines", medicines, {
+        shouldValidate: false,
+      });
+
       toast({
         title: "Prescription processed",
-        description: "Medicines have been extracted and added to the form",
+        description: "Medicines extracted. Please review before saving.",
       });
     }
   };
@@ -321,88 +332,35 @@ export default function PrescriptionCreation() {
                     </FormItem>
                   )}
                 />
+                <Button
+                  type="button"
+                  className="mt-4 bg-success-green hover:bg-green-700 text-white"
+                  onClick={() => {
+                    const medicines = form.getValues("medicines");
+
+                    if (medicines.every(m => !m.name)) {
+                      toast({
+                        title: "No medicines added",
+                        description: "Please add at least one medicine before processing.",
+                        variant: "destructive",
+                      });
+                      return;
+                    }
+
+                    setStage("processed");
+                    toast({
+                      title: "Prescription ready",
+                      description: "Please review the prescription and save.",
+                    });
+                  }}
+                >
+                  <i className="fas fa-check-circle mr-2"></i>
+                  Process Prescription
+                </Button>
               </CardContent>
             </Card>
           </div>
 
-          {/* Right Column - Preview */}
-          {/* <div className="lg:col-span-1">
-            <Card className="sticky top-6">
-              <CardContent className="p-6">
-                <h3 className="text-lg font-semibold text-gray-900 mb-4">Prescription Preview</h3> */}
-
-                {/* Doctor Info */}
-                {/* <div className="bg-gradient-to-br from-medical-blue to-blue-600 text-white p-6 rounded-xl mb-4">
-                  <div className="text-center mb-4">
-                    <h4 className="font-bold text-lg">
-                      Dr. {(currentDoctor as any)?.doctor?.firstName} {(currentDoctor as any)?.doctor?.lastName}
-                    </h4>
-                    <p className="text-blue-100">{(currentDoctor as any)?.doctor?.specialization || 'MD'}</p>
-                    <p className="text-blue-100 text-sm">License: {(currentDoctor as any)?.doctor?.medicalLicenseId}</p>
-                  </div>
-                  <div className="border-t border-blue-400 pt-4">
-                    <p className="text-sm font-medium mb-1">
-                      Patient: <span>{selectedPatient ? `${selectedPatient.firstName} ${selectedPatient.lastName}` : 'Not selected'}</span>
-                    </p>
-                    <p className="text-sm font-medium mb-1">
-                      Date: <span>{new Date().toLocaleDateString()}</span>
-                    </p>
-                  </div>
-                </div> */}
-
-                {/* Prescription Items */}
-                {/* <div className="space-y-3 mb-6">
-                  {form.watch("medicines").map((medicine, index) => (
-                    medicine.name && (
-                      <div key={index} className="p-3 bg-gray-50 rounded-lg" data-testid={`preview-medicine-${index}`}>
-                        <p className="font-medium text-gray-900">{medicine.name} {medicine.dosage}</p>
-                        <p className="text-sm text-gray-600">{medicine.frequency} • {medicine.duration}</p>
-                        {medicine.instructions && (
-                          <p className="text-sm text-gray-500">{medicine.instructions}</p>
-                        )}
-                      </div>
-                    )
-                  ))}
-                  {form.watch("medicines").every(m => !m.name) && (
-                    <div className="p-3 bg-gray-50 rounded-lg text-center text-gray-500">
-                      No medicines added yet
-                    </div>
-                  )}
-                </div> */}
-
-                {/* Action Buttons */}
-                {/* <div className="space-y-3">
-                  <Button
-                    type="submit"
-                    className="w-full bg-success-green hover:bg-green-700"
-                    disabled={savePrescriptionMutation.isPending}
-                    data-testid="button-save-prescription"
-                  >
-                    <i className="fas fa-save mr-2"></i>
-                    {savePrescriptionMutation.isPending ? "Saving..." : "Save Prescription"}
-                  </Button>
-                  <Button
-                    type="button"
-                    className="w-full"
-                    onClick={handleGeneratePDF}
-                    data-testid="button-generate-pdf"
-                  >
-                    <i className="fas fa-file-pdf mr-2"></i>
-                    Generate PDF
-                  </Button>
-                  <Button
-                    type="button"
-                    variant="outline"
-                    className="w-full"
-                    data-testid="button-email-patient"
-                  >
-                    <i className="fas fa-envelope mr-2"></i>
-                    Email to Patient
-                  </Button>
-                </div>
-              </CardContent>
-            </Card>
-          </div> */}
           <div className="lg:col-span-1">
             <Card className="sticky top-6 shadow-md">
               <CardContent className="p-6">
@@ -468,35 +426,54 @@ export default function PrescriptionCreation() {
 
                 {/* Action Buttons */}
                 <div className="space-y-3">
-                  <Button
-                    type="submit"
-                    className="w-full bg-green-600 hover:bg-green-700 text-white font-medium"
-                    disabled={savePrescriptionMutation.isPending}
-                    data-testid="button-save-prescription"
-                  >
-                    <i className="fas fa-save mr-2"></i>
-                    {savePrescriptionMutation.isPending
-                      ? "Saving..."
-                      : "Save Prescription"}
-                  </Button>
-                  <Button
-                    type="button"
-                    className="w-full bg-blue-600 hover:bg-blue-700 text-white font-medium"
-                    onClick={handleGeneratePDF}
-                    data-testid="button-generate-pdf"
-                  >
-                    <i className="fas fa-file-pdf mr-2"></i>
-                    Generate PDF
-                  </Button>
-                  <Button
-                    type="button"
-                    variant="outline"
-                    className="w-full border-gray-300 text-gray-700 font-medium hover:bg-gray-100"
-                    data-testid="button-email-patient"
-                  >
-                    <i className="fas fa-envelope mr-2"></i>
-                    Email to Patient
-                  </Button>
+
+                  {/* Save only after processing */}
+                  {stage === "processed" && (
+                    <Button
+                      type="submit"
+                      className="w-full bg-green-600 hover:bg-green-700 text-white font-medium"
+                      disabled={savePrescriptionMutation.isPending}
+                      data-testid="button-save-prescription"
+                    >
+                      <i className="fas fa-save mr-2"></i>
+                      {savePrescriptionMutation.isPending ? "Saving..." : "Save Prescription"}
+                    </Button>
+                  )}
+
+                  {/* Post-save actions */}
+                  {stage === "saved" && (
+                    <>
+                      <Button
+                        type="button"
+                        className="w-full bg-blue-600 hover:bg-blue-700 text-white font-medium"
+                        onClick={handleGeneratePDF}
+                      >
+                        <i className="fas fa-file-pdf mr-2"></i>
+                        Generate PDF
+                      </Button>
+
+                      <Button
+                        type="button"
+                        variant="outline"
+                        className="w-full border-gray-300 text-gray-700 font-medium hover:bg-gray-100"
+                      >
+                        <i className="fas fa-envelope mr-2"></i>
+                        Email to Patient
+                      </Button>
+
+                      <Button
+                        type="button"
+                        variant="ghost"
+                        className="w-full text-gray-500"
+                        onClick={() => {
+                          form.reset();
+                          setStage("idle");
+                        }}
+                      >
+                        New Prescription
+                      </Button>
+                    </>
+                  )}
                 </div>
               </CardContent>
             </Card>

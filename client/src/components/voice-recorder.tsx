@@ -84,6 +84,7 @@ export default function VoiceRecorder({ onTranscriptionProcessed }: VoiceRecorde
           {isRecording ? 'Speak clearly about the prescription' : 'Speak naturally about the prescription details'}
         </p>
         <Button
+          type = "button"
           onClick={handleToggleRecording}
           className={`px-6 py-3 rounded-xl font-semibold transition-colors ${
             isRecording 
@@ -108,6 +109,7 @@ export default function VoiceRecorder({ onTranscriptionProcessed }: VoiceRecorde
             data-testid="textarea-transcription"
           />
           <Button
+            type = "button"
             onClick={handleProcessPrescription}
             className="mt-3 bg-success-green hover:bg-green-700 text-white px-4 py-2 rounded-lg font-medium"
             data-testid="button-process-prescription"
