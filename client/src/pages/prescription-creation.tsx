@@ -13,6 +13,7 @@ import VoiceRecorder from "@/components/voice-recorder";
 import { useToast } from "@/hooks/use-toast";
 import { apiRequest } from "@/lib/queryClient";
 import { generatePrescriptionPDF } from "@/utils/pdf-generator";
+import { set } from "date-fns";
 
 
 
@@ -39,6 +40,10 @@ export default function PrescriptionCreation() {
   const [transcribedText, setTranscribedText] = useState("");
   const { toast } = useToast();
   const queryClient = useQueryClient();
+  const [prescriptionId, setPrescriptionId] = useState<string | null>(null); //store id in state on save to send with email
+  const [showEmailModal, setShowEmailModal] = useState(false);
+  const [manualEmail, setManualEmail] = useState("");
+  const [isSendingEmail, setIsSendingEmail] = useState(false);
 
   const { data: patients } = useQuery({
     queryKey: ["/api/patients"],
@@ -70,12 +75,14 @@ export default function PrescriptionCreation() {
 
   const savePrescriptionMutation = useMutation({
     mutationFn: (data: PrescriptionForm) => apiRequest("POST", "/api/prescriptions", data),
-    onSuccess: () => {
+    onSuccess: (savedPrescription : any) => {
+      console.log("Saved prescription:", savedPrescription);
       toast({
         title: "Prescription saved",
         description: "Prescription has been saved successfully",
       });
 
+      setPrescriptionId(savedPrescription.id);
       setStage("saved");
       queryClient.invalidateQueries({ queryKey: ["/api/prescriptions"] });
       // form.reset();
@@ -131,6 +138,40 @@ export default function PrescriptionCreation() {
       });
     }
   };
+
+  const handleEmailPrescription = async (email?: string) => {
+    if (!prescriptionId) {
+      toast({
+        title: "Prescription not saved",
+        description: "Please save the prescription before emailing.",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    try {
+      setIsSendingEmail(true);
+
+      await apiRequest("POST", `/api/prescriptions/${prescriptionId}/email`, email ? { email } : {});
+
+      toast({
+        title: "Email sent",
+        description: `Prescription emailed to ${email || selectedPatient?.email}`,
+      })
+
+      setShowEmailModal(false);
+      setManualEmail("");
+    } catch (error: any) {
+      toast({
+        title: "Failed to send email",
+        description: error.message || "Something went wrong. Please try again.",
+        variant: "destructive",
+      });
+    } finally {
+      setIsSendingEmail(false);
+    }      
+  }
+  
 
   return (
     <div>
@@ -456,9 +497,29 @@ export default function PrescriptionCreation() {
                         type="button"
                         variant="outline"
                         className="w-full border-gray-300 text-gray-700 font-medium hover:bg-gray-100"
+                        onClick = {() => {
+                          if(selectedPatient?.email) {
+                            handleEmailPrescription(); // direct send
+                          } else {
+                            setShowEmailModal(true); // ask doctor to input email
+                          }
+                        }}
+                        disabled={isSendingEmail}
                       >
-                        <i className="fas fa-envelope mr-2"></i>
-                        Email to Patient
+                        { isSendingEmail ? (
+                          <span className="flex items-center justify-center gap-2">
+                            <svg className="animate-spin h-5 w-5 text-gray-600" viewBox="0 0 24 24">
+                              <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" fill="none"/>
+                              <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8H4z"/>
+                            </svg>
+                            Sending...
+                          </span>
+                        ) : (
+                          <>
+                            <i className="fas fa-envelope mr-2"></i>
+                            Email to Patient
+                          </>
+                        )}
                       </Button>
 
                       <Button
@@ -480,6 +541,39 @@ export default function PrescriptionCreation() {
           </div>
         </form>
       </Form>
+      {showEmailModal && (
+        <div className="fixed inset-0 bg-black/40 flex items-center justify-center z-50">
+          <div className="bg-white rounded-xl p-6 w-full max-w-md">
+            <h3 className="text-lg font-semibold mb-2">
+              Enter Patient Email
+            </h3>
+
+            <Input
+              type="email"
+              placeholder="example@email.com"
+              value={manualEmail}
+              onChange={(e) => setManualEmail(e.target.value)}
+            />
+
+            <div className="flex justify-end gap-2 mt-4">
+              <Button
+                variant="ghost"
+                onClick={() => setShowEmailModal(false)}
+              >
+                Cancel
+              </Button>
+
+              <Button
+                disabled={!manualEmail || isSendingEmail}
+                onClick={() => handleEmailPrescription(manualEmail)}
+              >
+                {isSendingEmail ? "Sending..." : "Send Email"}
+              </Button>
+            </div>
+          </div>
+        </div>
+      )}
+
     </div>
   );
 }

@@ -20,7 +20,7 @@ export async function apiRequest(
   });
 
   await throwIfResNotOk(res);
-  return res;
+  return res.json() as Promise<Response>;
 }
 
 type UnauthorizedBehavior = "returnNull" | "throw";
