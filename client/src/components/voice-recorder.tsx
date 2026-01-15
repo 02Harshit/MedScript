@@ -80,8 +80,8 @@ export default function VoiceRecorder({ onTranscriptionProcessed }: VoiceRecorde
         <h4 className="text-lg font-medium text-gray-900 mb-2">
           {isRecording ? 'Recording...' : 'Click to Start Recording'}
         </h4>
-        <p className="text-gray-600 mb-4">
-          {isRecording ? 'Speak clearly about the prescription' : 'Speak naturally about the prescription details'}
+        <p className="text-gray-400 mb-4 italic">
+          {isRecording ? 'Speak clearly about the prescription' : 'For example: "Paracetamol 500 mg, three times daily for 7 days."'}
         </p>
         <Button
           type = "button"

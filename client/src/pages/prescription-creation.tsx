@@ -259,7 +259,7 @@ export default function PrescriptionCreation() {
                           <FormItem>
                             <FormLabel>Medicine Name</FormLabel>
                             <FormControl>
-                              <Input {...field} placeholder="e.g., Amoxicillin" data-testid={`input-medicine-name-${index}`} />
+                              <Input {...field} placeholder="e.g., Paracetamol" data-testid={`input-medicine-name-${index}`} />
                             </FormControl>
                             <FormMessage />
                           </FormItem>

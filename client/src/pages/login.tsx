@@ -351,6 +351,12 @@ export default function Login() {
               )}
             </Button>
 
+            <div className="relative flex items-center py-0">
+              <div className="flex-grow border-t-2 border-gray-300"></div>
+              <span className="px-3 text-gray-500 font-medium text-sm">or</span>
+              <div className="flex-grow border-t-2 border-gray-300"></div>
+            </div>
+
             <Button
               type = "button"
               className="w-full py-3 px-4 text-lg rounded-xl border-2 border-dashed border-medical-blue bg-transparent text-medical-blue hover:bg-medical-blue hover:text-white transition-all font-semibold"
