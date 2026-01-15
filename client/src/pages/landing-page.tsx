@@ -176,7 +176,7 @@ export default function LandingPage() {
             Welcome to MedScript
           </h1>
           <p className="text-lg md:text-xl text-gray-600 mb-6">
-            AI-powered prescription and patient management system for modern doctors.
+            Voice-driven prescription and patient management system for modern doctors.
           </p>
         </div>
 
@@ -187,7 +187,7 @@ export default function LandingPage() {
               <LineChart className="text-medical-blue w-10 h-10 mb-4" />
               <h3 className="font-semibold text-gray-900 mb-2">Smart Prescriptions</h3>
               <p className="text-sm text-gray-600">
-                Generate accurate, AI-assisted prescriptions with ease.
+                Generate accurate, voice-assisted prescriptions with ease.
               </p>
             </CardContent>
           </Card>

@@ -195,7 +195,7 @@ const loginSchema = z.object({
 type LoginForm = z.infer<typeof loginSchema>;
 
 export default function Login() {
-  // ...your logic and hooks here remain the same
+  
   const [, setLocation] = useLocation();
   const { toast } = useToast();
   const queryClient = useQueryClient();
@@ -231,6 +231,15 @@ export default function Login() {
   const onSubmit = (data: LoginForm) => {
     loginMutation.mutate(data);
   };
+
+  const handleDemoLogin = () => {
+    loginMutation.mutate({
+      identifier: "demo_doctor",
+      password: "demo123",
+      rememberMe: false,
+    })
+  };
+  
 
   return (
     <div className="min-h-screen flex items-center justify-center relative bg-gradient-to-br from-medical-blue via-blue-100 to-blue-700 p-6 overflow-hidden">
@@ -339,6 +348,22 @@ export default function Login() {
                 </span>
               ) : (
                 "Sign In"
+              )}
+            </Button>
+
+            <Button
+              type = "button"
+              className="w-full py-3 px-4 text-lg rounded-xl border-2 border-dashed border-medical-blue bg-transparent text-medical-blue hover:bg-medical-blue hover:text-white transition-all font-semibold"
+              onClick = {handleDemoLogin}
+              disabled={loginMutation.isPending}
+            >
+              {loginMutation.isPending ? (
+                <span className="flex items-center justify-center gap-2">
+                  <span className="animate-spin w-4 h-4 border-t-2 border-b-2 border-white rounded-full"></span>
+                  Signing In...
+                </span>
+              ) : (
+                "Login as Demo User"
               )}
             </Button>
 
