@@ -332,7 +332,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
   app.get("/api/test-email", async (req, res) => {
     try {
-      await sendTestEmail("your-email@example.com");
+      await sendTestEmail("mittalharshit2004@gmail.com");
       res.json({ message: "Test email sent successfully" });
     } catch (err) {
       console.error("Resend test failed:", err);
