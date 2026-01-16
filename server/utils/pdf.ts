@@ -22,24 +22,65 @@
 //   return Buffer.from(pdfUnit8);
 // }
 
-import puppeteer from "puppeteer-core";
-import chromium from "@sparticuz/chromium";
+// import puppeteer from "puppeteer-core";
+// import chromium from "@sparticuz/chromium";
+
+// export async function htmlToPDF(html: string): Promise<Buffer> {
+//   const browser = await puppeteer.launch({
+//     args: chromium.args,
+//     executablePath: await chromium.executablePath(),
+//     headless: true,
+//   });
+
+//   const page = await browser.newPage();
+//   await page.setContent(html, { waitUntil: "networkidle0" });
+
+//   const pdfUint8 = await page.pdf({
+//     format: "A4",
+//     printBackground: true,
+//   });
+
+//   await browser.close();
+//   return Buffer.from(pdfUint8);
+// }
 
 export async function htmlToPDF(html: string): Promise<Buffer> {
-  const browser = await puppeteer.launch({
-    args: chromium.args,
-    executablePath: await chromium.executablePath(),
-    headless: true,
-  });
+  if (process.env.NODE_ENV === "production") {
+    // ---- Render / Linux ----
+    const chromium = (await import("@sparticuz/chromium")).default;
+    const puppeteer = (await import("puppeteer-core")).default;
 
-  const page = await browser.newPage();
-  await page.setContent(html, { waitUntil: "networkidle0" });
+    const browser = await puppeteer.launch({
+      args: chromium.args,
+      executablePath: await chromium.executablePath(),
+      headless: true,
+    });
 
-  const pdfUint8 = await page.pdf({
-    format: "A4",
-    printBackground: true,
-  });
+    const page = await browser.newPage();
+    await page.setContent(html, { waitUntil: "networkidle0" });
 
-  await browser.close();
-  return Buffer.from(pdfUint8);
+    const pdf = await page.pdf({
+      format: "A4",
+      printBackground: true,
+    });
+
+    await browser.close();
+    return Buffer.from(pdf);
+  } else {
+    // ---- Local dev ----
+    const puppeteer = (await import("puppeteer")).default;
+
+    const browser = await puppeteer.launch({ headless: true });
+    const page = await browser.newPage();
+    await page.setContent(html, { waitUntil: "networkidle0" });
+
+    const pdf = await page.pdf({
+      format: "A4",
+      printBackground: true,
+    });
+
+    await browser.close();
+    return Buffer.from(pdf);
+  }
 }
+

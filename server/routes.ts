@@ -7,9 +7,9 @@ import { z } from "zod";
 import { transporter } from "./utils/mailer";
 import { generatePrescriptionPDF } from "./utils/prescriptionPdf";
 import { generatePrescriptionHTML } from "./utils/prescriptionTemplate";
-import { htmlToPDF } from "./utils/pdf";
+import { htmlToPDF} from "./utils/pdf";
 import { renderPrescriptionHTML } from "@shared/prescription/renderPrescriptionHTML";
-import { sendTestEmail } from "./services/resendEmail";
+import { sendPrescriptionEmail } from "./utils/resendEmail";
 
 
 
@@ -261,34 +261,99 @@ export async function registerRoutes(app: Express): Promise<Server> {
   });
 
   // Email sending route
+  // app.post("/api/prescriptions/:id/email", requireAuth, async (req, res) => {
+  //   try {
+  //     const prescriptionId = req.params.id;
+  //     const { email } = req.body;
+  //     const doctorId = req.session.doctorId;
+
+  //     const prescriptions = await storage.getPrescriptionsByDoctor(doctorId!);
+  //     const prescription = prescriptions.find(p => p.id === prescriptionId);
+      
+  //     if (!prescription) {
+  //       return res.status(404).json({ message: "Prescription not found" });
+  //     }
+
+  //     const patient = await storage.getPatient(prescription.patientId);
+  //     if(!patient) {
+  //       return res.status(404).json({ message: "Patient not found" });
+  //     }
+
+  //     const doctorRecord = await storage.getDoctor(doctorId!);
+  //     if(!doctorRecord) {
+  //       return res.status(404).json({ message: "Doctor not found" });
+  //     }
+
+  //     const targetEmail = email || patient.email;
+  //     if (!targetEmail) {
+  //       return res.status(400).json({ message: "No email address provided for patient" });
+  //     }
+
+  //     const doctorForTemplate = {
+  //       firstName: doctorRecord.firstName,
+  //       lastName: doctorRecord.lastName,
+  //       medicalLicenseId: doctorRecord.medicalLicenseId,
+  //       specialization: doctorRecord.specialization ?? undefined,
+  //     };
+
+  //     const html = renderPrescriptionHTML({
+  //       doctor: doctorForTemplate,
+  //       patient,
+  //       medicines: prescription.medicines,
+  //       additionalNotes: prescription.additionalNotes ?? "",
+  //       date: new Date().toLocaleDateString(),
+  //     });
+
+  //     const pdfBuffer = await htmlToPDF(html);
+
+  //     return res.json({
+  //       message: "Prescription email sent successfully",
+  //       sentTo: targetEmail,
+  //     });
+
+  //   } catch (err) {
+  //     console.error("Email prescription error:",err);
+  //     res.status(500).json({ message: "Internal server error" });
+  //   }
+  // });
+
   app.post("/api/prescriptions/:id/email", requireAuth, async (req, res) => {
     try {
-      const prescriptionId = req.params.id;
-      const { email } = req.body;
-      const doctorId = req.session.doctorId;
+      console.log("📨 Sending prescription email:", req.params.id);
 
+      const prescriptionId = req.params.id;
+      const doctorId = req.session.doctorId;
+      const { email: manualEmail } = req.body as { email?: string };
+
+      // 1️⃣ Fetch prescription
       const prescriptions = await storage.getPrescriptionsByDoctor(doctorId!);
       const prescription = prescriptions.find(p => p.id === prescriptionId);
-      
+
       if (!prescription) {
         return res.status(404).json({ message: "Prescription not found" });
       }
 
+      // 2️⃣ Fetch patient
       const patient = await storage.getPatient(prescription.patientId);
-      if(!patient) {
+      if (!patient) {
         return res.status(404).json({ message: "Patient not found" });
       }
 
+      // 3️⃣ Fetch doctor
       const doctorRecord = await storage.getDoctor(doctorId!);
-      if(!doctorRecord) {
+      if (!doctorRecord) {
         return res.status(404).json({ message: "Doctor not found" });
       }
 
-      const targetEmail = email || patient.email;
+      // 4️⃣ Decide target email (manual > patient.email)
+      const targetEmail = manualEmail ?? patient.email;
       if (!targetEmail) {
-        return res.status(400).json({ message: "No email address provided for patient" });
+        return res.status(400).json({
+          message: "No email address provided for patient",
+        });
       }
 
+      // 5️⃣ Prepare doctor data
       const doctorForTemplate = {
         firstName: doctorRecord.firstName,
         lastName: doctorRecord.lastName,
@@ -296,6 +361,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
         specialization: doctorRecord.specialization ?? undefined,
       };
 
+      // 6️⃣ Generate prescription HTML
       const html = renderPrescriptionHTML({
         doctor: doctorForTemplate,
         patient,
@@ -304,41 +370,35 @@ export async function registerRoutes(app: Express): Promise<Server> {
         date: new Date().toLocaleDateString(),
       });
 
+      console.log("📄 Generating PDF...");
       const pdfBuffer = await htmlToPDF(html);
+      console.log("📄 PDF generated:", pdfBuffer.length, "bytes");
 
-      await transporter.sendMail({
-        to: targetEmail,
-        from: `"MedScript" <${process.env.MAIL_USER}>`,
-        subject: "Your Medical Prescription",
-        text: "Please find attached your medical prescription.",
-        attachments: [
-          {
-            filename: `prescription-${patient.firstName}.pdf`,
-            content: pdfBuffer,
-          },
-        ],
-      });
+      console.log("✉️ Sending email...");
+      const emailResult = await sendPrescriptionEmail(
+        targetEmail,
+        doctorForTemplate.firstName,
+        patient.firstName,
+        pdfBuffer
+      );
 
+      console.log("✅ Email sent:", emailResult);
+
+      // 7️⃣ Respond ONLY after success
       return res.json({
         message: "Prescription email sent successfully",
         sentTo: targetEmail,
       });
 
     } catch (err) {
-      console.error("Email prescription error:",err);
-      res.status(500).json({ message: "Internal server error" });
+      console.error("❌ Email prescription error:", err);
+      return res.status(500).json({
+        message: "Failed to send prescription email",
+      });
     }
   });
 
-  app.get("/api/test-email", async (req, res) => {
-    try {
-      await sendTestEmail("mittalharshit2004@gmail.com");
-      res.json({ message: "Test email sent successfully" });
-    } catch (err) {
-      console.error("Resend test failed:", err);
-      res.status(500).json({ message: "Failed to send test email" });
-    }
-  });
+
   // Dashboard stats
   app.get("/api/dashboard/stats", requireAuth, async (req, res) => {
     try {
