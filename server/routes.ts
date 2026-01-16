@@ -9,6 +9,7 @@ import { generatePrescriptionPDF } from "./utils/prescriptionPdf";
 import { generatePrescriptionHTML } from "./utils/prescriptionTemplate";
 import { htmlToPDF } from "./utils/pdf";
 import { renderPrescriptionHTML } from "@shared/prescription/renderPrescriptionHTML";
+import { sendTestEmail } from "./services/resendEmail";
 
 
 
@@ -326,6 +327,16 @@ export async function registerRoutes(app: Express): Promise<Server> {
     } catch (err) {
       console.error("Email prescription error:",err);
       res.status(500).json({ message: "Internal server error" });
+    }
+  });
+
+  app.get("/api/test-email", async (req, res) => {
+    try {
+      await sendTestEmail("your-email@example.com");
+      res.json({ message: "Test email sent successfully" });
+    } catch (err) {
+      console.error("Resend test failed:", err);
+      res.status(500).json({ message: "Failed to send test email" });
     }
   });
   // Dashboard stats
