@@ -10,7 +10,8 @@
     "check": "tsc",
     "db:push": "drizzle-kit push",
     "dev:frontend": "vite",
-    "dev:backend": "cross-env NODE_ENV=development USE_EXTERNAL_VITE=true tsx server/index.ts"
+    "dev:backend": "cross-env NODE_ENV=development USE_EXTERNAL_VITE=true tsx server/index.ts",
+    "postinstall": "npx puppeteer browsers install chrome"
   },
   "dependencies": {
     "@hookform/resolvers": "^3.10.0",
